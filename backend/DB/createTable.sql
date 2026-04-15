@@ -1,0 +1,13 @@
+CREATE TABLE Games (
+	"ID" INTEGER PRIMARY KEY AUTOINCREMENT,
+	"Name" TEXT NOT NULL UNIQUE,
+	"UrlBigImage" TEXT,
+	"UrlSmallImage" TEXT,
+	"MinPlayer" INTEGER NOT NULL,
+	"MaxPlayer" INTEGER NOT NULL,
+    "MinAge" INTEGER NOT NULL,
+	"Time" INTEGER NOT NULL,
+	"Description" TEXT,
+	"Year" INTEGER,
+	"Location" TEXT(3) NOT NULL
+);
