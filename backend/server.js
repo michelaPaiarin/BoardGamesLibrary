@@ -1,25 +1,19 @@
 import express from 'express';
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
 
 import gamesRouters from './routes/games.js';
+import { connectDB } from './DB/database.js';
 
 const app = express();
 const port = 3000;
-const dbRoute = './DB/games.db';
 
 app.use(express.static('../frontend'));
 
 async function start() {
   try {
-    const db = await open({
-      filename: dbRoute,
-      driver: sqlite3.Database
-    });
+    await connectDB();
 
     console.log('Database connected successfully');
 
-    app.set('db', db);
     app.use('/games', gamesRouters);
 
     app.listen(port, () => {
