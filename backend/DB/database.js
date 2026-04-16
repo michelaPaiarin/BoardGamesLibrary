@@ -1,8 +1,13 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
-const dbRoute = 'games.db';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const dbRoute = path.join(__dirname, 'games.db');
 let DB = null;
 
 export async function connectDB() {
@@ -12,7 +17,6 @@ export async function connectDB() {
           driver: sqlite3.Database
         });
 
-    
         console.log('Database initialized successfully');
     }catch (error) {
         console.error('Error connecting to the database:', error);

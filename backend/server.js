@@ -3,10 +3,18 @@ import express from 'express';
 import gamesRouters from './routes/games.js';
 import { connectDB } from './DB/database.js';
 
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const frontendPath = path.join(__dirname, '../frontend');
+
 const app = express();
 const port = 3000;
 
-app.use(express.static('../frontend'));
+app.use(express.static(frontendPath));
 
 async function start() {
   try {
