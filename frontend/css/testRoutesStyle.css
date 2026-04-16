@@ -13,6 +13,8 @@ pre {
     font-family: 'Courier New', Courier, monospace;
 
     white-space: pre-wrap;
+    max-height: 30vh;
+    overflow-y: auto;
 }
 
 .output {
