@@ -40,7 +40,6 @@ runRoute('/games/21', '#outputDeleteGame', {
     })
 
 function newGameFormSubmitted(event) {
-    console.log("new GAME!!!!");
     event.preventDefault();
     const formData = new FormData(event.target);
     const gameData = Object.fromEntries(formData);
