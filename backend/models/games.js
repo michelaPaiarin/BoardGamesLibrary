@@ -33,9 +33,21 @@ export async function getGameFiltered(filters) {
     }
 }
 
+export async function addGame(game) {
+    console.log('Adding new game:', game);
+    return { message: 'Game added successfully (not really, this is just a placeholder)' };
+}
+
+export async function updateGame(gameId, game) {
+    console.log(`Updating game with ID: ${gameId}`, game);
+    return { message: 'Game updated successfully (not really, this is just a placeholder)' };
+}
+
+export async function deleteGame(gameId) {
+    console.log(`Deleting game with ID: ${gameId}`);
+    return { message: 'Game deleted successfully (not really, this is just a placeholder)' };
+}
 
 export default {
-    getAllGames,
-    getGameById,
-    getGameFiltered
+    getAllGames, getGameById, getGameFiltered, addGame, updateGame, deleteGame
 }
