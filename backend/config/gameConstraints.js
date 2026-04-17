@@ -7,3 +7,4 @@ export const GAME_CONSTRAINTS = {
     MaxYear: new Date().getFullYear(),
     LocationRegex: /^[A-Z]\.\d+\.\d+$/,
     ImageAcceptedProtocols: ['http:', 'https:']
+};

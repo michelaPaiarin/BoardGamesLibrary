@@ -29,10 +29,7 @@ export function validateGame(game, isUpdate = false) {
         if (!GAME_CONSTRAINTS.RequireFields.includes(field) && !GAME_CONSTRAINTS.OptionalFields.includes(field)) {
             continue; // Ignore unknown fields
         }else {
-            console.log(`Validating field: ${field}`);
-            if (game[field] === undefined || game[field] === null) {
-                continue; // Skip validation for undefined or null optional fields
-            }
+            if (game[field] === undefined || game[field] === null) { continue; } // Skip validation for undefined or null optional fields
 
             switch (field) {
                 case 'name': validationResult = validateName(game); break;

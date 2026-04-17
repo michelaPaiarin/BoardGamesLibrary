@@ -19,51 +19,35 @@ export async function getGameById(gameId) {
         throw {status: 400, message: validation.message};
     }
 
-    try {
-        return await GamesModel.getGameById(gameId);
-    } catch (error) {
-        throw error;
-    }
+    try { return await GamesModel.getGameById(gameId); }
+    catch (error) { throw error; }
 }    
 
 export async function addGame(game) {
     let validation = GamesValidator.validateGame(game);
-    if (!validation.valid) {
-        throw {status: 400, message: validation.message};
-    }
-    try {
-        return await GamesModel.addGame(game);
-    } catch (error) {
-        throw error;
-    }
+    if (!validation.valid) { throw {status: 400, message: validation.message}; }
+    
+    try { return await GamesModel.addGame(game); }
+    catch (error) { throw error; }
 }
 
 export async function updateGame(gameId, game) {
     let idValidation = GamesValidator.validateID(gameId);
-    if (!idValidation.valid) {
-        throw {status: 400, message: idValidation.message};
-    }
+    if (!idValidation.valid) { throw {status: 400, message: idValidation.message};}
+
     let gameValidation = GamesValidator.validateGame(game);
-    if (!gameValidation.valid) {
-        throw {status: 400, message: gameValidation.message};
-    }
-    try {
-        return await GamesModel.updateGame(gameId, game);
-    } catch (error) {
-        throw error;
-    }
+    if (!gameValidation.valid) { throw {status: 400, message: gameValidation.message};}
+    
+    try { return await GamesModel.updateGame(gameId, game);}
+    catch (error) { throw error; }
 }
 
 export async function deleteGame(gameId) {
     let validation = GamesValidator.validateID(gameId);
-    if (!validation.valid) {
-        throw {status: 400, message: validation.message};
-    }
-    try {
-        return await GamesModel.deleteGame(gameId);
-    } catch (error) {
-        throw error;
-    }
+    if (!validation.valid) { throw {status: 400, message: validation.message}; }
+    
+    try { return await GamesModel.deleteGame(gameId); }
+    catch (error) { throw error; }
 }
 
 export default {
