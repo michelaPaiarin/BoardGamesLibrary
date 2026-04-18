@@ -5,11 +5,8 @@ const router = express.Router();
 //Routes with prefix /games
 
 router.get("/", async (req, res) => {
-    try {
-        res.status(200).json(await GamesController.getAllGames(req.query));
-    }catch (error) {
-        res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});
-    }
+    try             { res.status(200).json(await GamesController.getAllGames(req.query));}
+    catch (error)   { res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});}
 });
 
 router.get("/:gameId", async (req, res) => {
@@ -22,27 +19,18 @@ router.get("/:gameId", async (req, res) => {
 });
 
 router.post("/", json(), async (req, res) => {
-    try {
-        res.status(201).json(await GamesController.addGame(req.body));
-    } catch (error) {
-        res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});
-    }
+    try             { res.status(201).json(await GamesController.addGame(req.body));}
+    catch (error)   { res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});}
 });
 
 router.put("/:gameId", json(), async (req, res) => {
-    try {
-        res.status(200).json(await GamesController.updateGame(req.params.gameId, req.body));
-    } catch (error) {
-        res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});
-    }
+    try             { res.status(200).json(await GamesController.updateGame(req.params.gameId, req.body));}
+    catch (error)   { res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});}
 });
 
 router.delete("/:gameId", async (req, res) => {
-    try {
-        res.status(200).json(await GamesController.deleteGame(req.params.gameId));
-    } catch (error) {
-        res.status(error.status || 500).json({error: error.message || 'Internal Server Error'});
-    }
+    try             { res.status(200).json(await GamesController.deleteGame(req.params.gameId));}
+    catch (error)   { res.status(error.status || 500).json({error: error.message || 'Internal Server Error'}); }
 });
 
 export default router;
