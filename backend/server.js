@@ -14,19 +14,16 @@ const frontendPath = path.join(__dirname, '../frontend');
 const app = express();
 const port = 3000;
 
+app.use(express.json());
 app.use(express.static(frontendPath));
 
 async function start() {
   try {
     await connectDB();
-
     console.log('Database connected successfully');
 
     app.use('/games', gamesRouters);
-
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
+    app.listen(port, () => { console.log(`Server is running on port ${port}`); });
   } catch (error) {
     console.error('Error during startup:', error);
   }
