@@ -34,12 +34,25 @@ export async function addGame(game) {
 export async function updateGame(gameId, game) {
     let idValidation = GamesValidator.validateID(gameId);
     if (!idValidation.valid) { throw {status: 400, message: idValidation.message};}
-
+    
+    if (fieldsToUpdate.length === 0) {
+        throw { status: 400, message: 'No fields provided to update' };
+    }
+    
     let gameValidation = GamesValidator.validateGame(game);
     if (!gameValidation.valid) { throw {status: 400, message: gameValidation.message};}
     
     try { return await GamesModel.updateGame(gameId, game);}
-    catch (error) { throw error; }
+    catch (error) {
+        if (error.message === 'GAME_NOT_FOUND') {
+            throw { status: 404, message: 'No game found with the provided ID' };
+        }
+        if (error.message === 'NO_FIELDS_TO_UPDATE') {
+            throw { status: 400, message: 'No fields provided to update' };
+        }
+
+
+        throw error; }
 }
 
 export async function deleteGame(gameId) {
