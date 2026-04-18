@@ -1,6 +1,7 @@
 import { GAME_CONSTRAINTS } from '../config/gameConstraints.js';
 
 const ERROR_UNKNOWN_FIELDS = new Error("Unknown fields");
+const ERROR_INVALID_DATA_TYPE = new Error("Invalid data type. Only strings, numbers, or null are allowed.");
 
 const validators = {
     'ID': validateID,                   'Name': validateName,
@@ -25,8 +26,10 @@ export function cleanGameData(game){
         if(typeof value === 'string'){
             const trimmedString = value.trim();
             newGame[field] = (trimmedString === '') ? null : trimmedString;
+        }else if(typeof value === 'number' || value === null){
+            newGame[field] = value;
         }else{
-            newGame[field] = value
+            throw ERROR_INVALID_DATA_TYPE;
         }
     }
     return newGame;

@@ -21,7 +21,10 @@ export async function getGameById(gameId) {
 export async function addGame(game) {
     game = GamesValidator.cleanGameData(game);
     let validation = GamesValidator.validateGame(game);
-
+    
+    try                     { game = GamesValidator.cleanGameData(game);}
+    catch(error)            { throw { status: 400, message: error.message }; }
+    
     if (!validation.valid)  { throw {status: 400, message: validation.message}; }
     try                     { return await GamesModel.addGame(game); }
     catch (error)           { throw error; }
@@ -30,11 +33,14 @@ export async function addGame(game) {
 export async function updateGame(gameId, game) {
     let idValidation = GamesValidator.validateID(gameId);
     if (!idValidation.valid)                            { throw { status: 400, message: idValidation.message};}
-    if (Object.keys(game).length === 0)                 { throw { status: 400, message: 'No fields provided to update' }; }
-    
-    game = GamesValidator.cleanGameData(game);
+
+    try                                                 { game = GamesValidator.cleanGameData(game);}
+    catch(error)                                        { throw { status: 400, message: error.message }; }
+
     let gameValidation = GamesValidator.validateGame(game, true);
     if (!gameValidation.valid)                          { throw {status: 400, message: gameValidation.message};}
+    
+    if (Object.keys(game).length === 0)                 { throw { status: 400, message: 'No fields provided to update' }; }
     
     try { return await GamesModel.updateGame(gameId, game);}
     catch (error) {
