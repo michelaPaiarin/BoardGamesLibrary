@@ -18,13 +18,18 @@ export function fieldsValidator(field){
 }
 
 export function cleanGameData(game){
+    let newGame = {}
     for(const [field, value] of Object.entries(game)){
+        if (!GAME_CONSTRAINTS.Fields.includes(field)) { continue; }
+
         if(typeof value === 'string'){
             const trimmedString = value.trim();
-            game[field] = (trimmedString === '') ? null : trimmedString;
+            newGame[field] = (trimmedString === '') ? null : trimmedString;
+        }else{
+            newGame[field] = value
         }
     }
-    return game;
+    return newGame;
 }
 
 function checkValueRequire(fieldName, value){
