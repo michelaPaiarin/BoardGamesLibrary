@@ -19,13 +19,11 @@ export async function getGameById(gameId) {
 }    
 
 export async function addGame(game) {
-    game = GamesValidator.cleanGameData(game);
-    let validation = GamesValidator.validateGame(game);
-    
     try                     { game = GamesValidator.cleanGameData(game);}
     catch(error)            { throw { status: 400, message: error.message }; }
     
-    if (!validation.valid)  { throw {status: 400, message: validation.message}; }
+    let validation = GamesValidator.validateGame(game);
+    if (!validation.valid)  { throw { status: 400, message: validation.message}; }
     try                     { return await GamesModel.addGame(game); }
     catch (error)           { throw error; }
 }
@@ -53,9 +51,12 @@ export async function updateGame(gameId, game) {
 export async function deleteGame(gameId) {
     let validation = GamesValidator.validateID(gameId);
     
-    if (!validation.valid)  { throw {status: 400, message: validation.message}; }
-    try                     { return await GamesModel.deleteGame(gameId); }
-    catch (error)           { throw error; }
+    if (!validation.valid)                              { throw {status: 400, message: validation.message}; }
+    try                                                 { return await GamesModel.deleteGame(gameId); }
+    catch (error) { 
+        if (error.message === 'GAME_NOT_FOUND')         { throw { status: 404, message: 'No game found with the provided ID' };}
+        throw error; 
+    }
 }
 
 export default {
