@@ -28,9 +28,6 @@ export async function connectDB(mode = MODE.DEFAULT) {
 }
 
 export function getDB() {
-    if (DB) {
-        return DB;
-    } else {
-        throw new Error('Database connection not established. Please call connectDB() first.');
-    }
+    if (DB) { return DB;}
+    else    { throw new Error('Database connection not established. Please call connectDB() first.');}
 }
