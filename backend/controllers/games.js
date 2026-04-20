@@ -24,6 +24,10 @@ export async function addGame(game) {
     
     let validation = GamesValidator.validateGame(game);
     if (!validation.valid)  { throw { status: 400, message: validation.message}; }
+
+    let existingGame = (await GamesModel.getGameByName(game.Name, true))[0];
+    if (existingGame)       { throw { status: 409, message: 'A game with the same name already exists' }; }
+
     try                     { return await GamesModel.addGame(game); }
     catch (error)           { throw error; }
 }
@@ -39,7 +43,11 @@ export async function updateGame(gameId, game) {
     if (!gameValidation.valid)                          { throw {status: 400, message: gameValidation.message};}
     
     if (Object.keys(game).length === 0)                 { throw { status: 400, message: 'No fields provided to update' }; }
-    
+    if (game.Name) {
+        let existingGame = (await GamesModel.getGameByName(game.Name, true))[0];
+        if (existingGame && existingGame['ID'] !== parseInt(gameId) ){ throw { status: 409, message: 'A game with the same name already exists' }; }
+    }
+
     try { return await GamesModel.updateGame(gameId, game);}
     catch (error) {
         if (error.message === 'GAME_NOT_FOUND')         { throw { status: 404, message: 'No game found with the provided ID' };}

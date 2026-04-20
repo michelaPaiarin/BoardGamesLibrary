@@ -24,6 +24,20 @@ export async function getGameById(gameId) {
     }
 }
 
+export async function getGameByName(gameName, exactMatch = false) {
+    console.log("Fetching game with name:", gameName, "Exact match:", exactMatch);
+    try {
+        const query = baseSelctQuery + (exactMatch
+            ? " WHERE Name = ?"
+            : " WHERE Name LIKE ?");
+
+        return await getDB().all(query, [exactMatch ? gameName : `%${gameName}%`]);
+    } catch (error) {
+        console.error('Error fetching game by name:', gameName);
+        throw error;
+    }
+}
+
 export async function getGameFiltered(filters) {
     console.log('Fetching games with filters:', filters);
     try {
@@ -93,5 +107,5 @@ export async function deleteGame(gameId) {
 }
 
 export default {
-    getAllGames, getGameById, getGameFiltered, addGame, updateGame, deleteGame
+    getAllGames, getGameById, getGameFiltered, getGameByName, addGame, updateGame, deleteGame
 }
