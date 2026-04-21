@@ -1,5 +1,5 @@
 backend/node_modules/
 backend/.DS_Store
 backend/*.db
-backend/db/test_games.db
-backend/db/games.db
+backend/DB/test_games.db
+backend/DB/games.db
