@@ -56,7 +56,7 @@ export function checkRequireFields(game, isUpdate){
 
 
 export function validateID(id) {
-    if (!id || isNaN(id) || parseInt(id) <= 0) {
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
         return { valid: false, message: 'Invalid ID. ID must be a positive integer.' };
     }
     return { valid: true };

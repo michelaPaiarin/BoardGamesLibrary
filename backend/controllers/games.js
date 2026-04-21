@@ -43,6 +43,10 @@ export async function updateGame(gameId, game) {
     if (!gameValidation.valid)                          { throw {status: 400, message: gameValidation.message};}
     
     if (Object.keys(game).length === 0)                 { throw { status: 400, message: 'No fields provided to update' }; }
+    
+    const existingID = await GamesModel.getGameById(gameId);
+    if (!existingID)                                    { throw { status: 404, message: 'No game found with the provided ID' }; }
+    
     if (game.Name) {
         let existingGame = (await GamesModel.getGameByName(game.Name, true))[0];
         if (existingGame && existingGame['ID'] !== parseInt(gameId) ){ throw { status: 409, message: 'A game with the same name already exists' }; }

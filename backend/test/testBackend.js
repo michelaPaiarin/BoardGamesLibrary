@@ -1,196 +1,497 @@
-/**
- * ============================================================================
- * E2E API INTEGRATION TEST SUITE - Board Games Library
- * ============================================================================
- * Ambiente: Test Isocrono (Database test_games.db)
- * Scopo: Validazione completa dei flussi CRUD, gestione errori e 
- * sanitizzazione dei payload in ingresso.
- * ============================================================================
- */
-
 import { start, MODE } from '../server.js';
-import readline from 'readline';
 
-const BASE_URL = 'http://localhost:3000/games';
+// ─────────────────────────────────────────────
+//  UTILITIES
+// ─────────────────────────────────────────────
 
-// Configurazione dell'interfaccia interattiva per le pause
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+const BASE = 'http://localhost:3000';
+let server;
+let passed = 0;
+let failed = 0;
+const results = [];
 
-const askUserToContinue = (phaseMessage) => {
-    return new Promise((resolve) => {
-        console.log(`\n⏸️  PAUSA INTERATTIVA: ${phaseMessage}`);
-        rl.question(`👉 Controlla il DB 'test_games.db', poi premi INVIO per continuare...`, () => {
-            resolve();
-        });
-    });
+const colors = {
+  reset:  '\x1b[0m',
+  green:  '\x1b[32m',
+  red:    '\x1b[31m',
+  yellow: '\x1b[33m',
+  cyan:   '\x1b[36m',
+  bold:   '\x1b[1m',
+  dim:    '\x1b[2m',
+  blue:   '\x1b[34m',
+  magenta:'\x1b[35m',
 };
 
-let createdGameId = null; 
-let testsPassed = 0;
-let testsFailed = 0;
+const c = (color, text) => `${colors[color]}${text}${colors.reset}`;
 
-/**
- * Helper per la formattazione dei risultati del test e la stampa delle risposte
- */
-async function assertTest(testName, expectedStatus, response) {
-    const actualStatus = response.status;
-    let responseData;
-    
-    try {
-        responseData = await response.json();
-    } catch {
-        responseData = "Nessun corpo JSON nella risposta";
-    }
-
-    if (expectedStatus === actualStatus) {
-        console.log(`✅ [PASS] ${testName} (Status: ${actualStatus})`);
-        testsPassed++;
-    } else {
-        console.log(`❌ [FAIL] ${testName}`);
-        console.log(`   -> Atteso: ${expectedStatus}, Ricevuto: ${actualStatus}`);
-        testsFailed++;
-    }
-    // Stampa il dettaglio della risposta per ispezione
-    console.log(`   📄 Risposta API:`, responseData);
-    return responseData;
+function section(title) {
+  console.log('\n' + c('blue', '━'.repeat(60)));
+  console.log(c('bold', c('cyan', `  📦 ${title}`)));
+  console.log(c('blue', '━'.repeat(60)));
 }
 
-/**
- * Helper per eseguire chiamate HTTP semplificate
- */
-async function makeRequest(method, endpoint, payload = null) {
-    const options = { method, headers: { 'Content-Type': 'application/json' } };
-    if (payload) options.body = JSON.stringify(payload);
-    return await fetch(`${BASE_URL}${endpoint}`, options);
+function log(label, status, detail = '') {
+  const icon   = status === 'PASS' ? '✅' : status === 'FAIL' ? '❌' : '⚠️ ';
+  const color  = status === 'PASS' ? 'green' : status === 'FAIL' ? 'red' : 'yellow';
+  const line   = `  ${icon}  ${c(color, status.padEnd(4))}  ${label}`;
+  const extra  = detail ? c('dim', `\n         ${detail}`) : '';
+  console.log(line + extra);
+  if (status === 'PASS') passed++;
+  else if (status === 'FAIL') failed++;
+  results.push({ label, status, detail });
 }
 
-// ============================================================================
-// ESECUZIONE DELLA TEST SUITE
-// ============================================================================
-async function runAdvancedSuite() {
-    console.log("====================================================");
-    console.log("🚀 AVVIO SUITE DI TEST E2E AVANZATA");
-    console.log("====================================================\n");
+async function req(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res = await fetch(`${BASE}${path}`, opts);
+  let json = null;
+  try { json = await res.json(); } catch (_) {}
+  return { status: res.status, body: json };
+}
 
-    try {
-        console.log("⚙️  Inizializzazione Server in modalità TEST...");
-        const server = await start(MODE.TEST);
-        
-        // Attesa per garantire l'inizializzazione del driver SQLite
-        await new Promise(resolve => setTimeout(resolve, 500));
+function expect(label, actual, expected, detail = '') {
+  if (actual === expected) {
+    log(label, 'PASS', detail || `status ${actual}`);
+    return true;
+  } else {
+    log(label, 'FAIL', `expected ${expected}, got ${actual}  ${detail}`);
+    return false;
+  }
+}
 
-        // ---------------------------------------------------------
-        // FASE 1: LETTURA E CREAZIONE (GET & POST)
-        // ---------------------------------------------------------
-        console.log("\n--- FASE 1: LETTURA E INSERIMENTO DATI ---");
-        
-        let res = await makeRequest('GET', '/');
-        await assertTest("GET /games -> Recupero lista iniziale giochi", 200, res);
+// ─────────────────────────────────────────────
+//  VALID GAME FIXTURES
+// ─────────────────────────────────────────────
 
-        const uniqueGameName = `E2E Test Game - ${Date.now()}`;
+const validGame = () => ({
+  Name:        'Catan',
+  MinPlayer:   2,
+  MaxPlayer:   4,
+  MinAge:      10,
+  Time:        90,
+  Location:    'A.1.2',
+  Description: 'Classic resource-trading board game.',
+  UrlBigImage:  'https://example.com/catan-big.jpg',
+  UrlSmallImage:'https://example.com/catan-small.jpg',
+  Year:        1995,
+});
 
-        const payloadValido = {
-            Name: uniqueGameName, MinPlayer: "1", MaxPlayer: "4", MinAge: "14", 
-            Time: "120", Location: "A.1.1", Description: "Campagna E2E Test"
-        };
-        
-        res = await makeRequest('POST', '/', payloadValido);
-        const postData = await assertTest("POST /games -> Inserimento Gioco Valido", 201, res);
-        
-        // Estrazione ID (adattato in base al nome della chiave restituita dal tuo Model)
-        createdGameId = postData.gameId || postData.id || postData.lastID;
-        
-        if (!createdGameId) {
-            console.log("\n🛑 ABORTO FASI SUCCESSIVE: Impossibile recuperare l'ID del gioco creato.");
-            console.log("   -> Causa probabile: Violazione vincolo UNIQUE o errore Server.");
-            console.log("   -> Evito gli errori a cascata sulle rotte PUT e DELETE.");
-            
-            server.close();
-            process.exit(1);
-        }
-        
-        
+const validGame2 = () => ({
+  Name:      'Ticket to Ride',
+  MinPlayer: 2,
+  MaxPlayer: 5,
+  MinAge:    8,
+  Time:      60,
+  Location:  'B.2.3',
+});
 
-        res = await makeRequest('POST', '/', { Name: "Scacchi" });
-        await assertTest("POST /games -> Rifiuto per Campi Obbligatori Mancanti", 400, res);
+const validGame3 = () => ({
+  Name:      'Pandemic',
+  MinPlayer: 2,
+  MaxPlayer: 4,
+  MinAge:    8,
+  Time:      45,
+  Location:  'C.1.1',
+  Year:      2008,
+});
 
-        res = await makeRequest('POST', '/', { ...payloadValido, Time: [120] });
-        await assertTest("POST /games -> Rifiuto per Type Checking Fallito (Time as Array)", 400, res);
+// ─────────────────────────────────────────────
+//  TEST RUNNER
+// ─────────────────────────────────────────────
 
-        // PAUSA INTERATTIVA
-        await askUserToContinue("Gioco creato. Verifica l'inserimento del record (Gloomhaven).");
+async function run() {
+  console.log('\n' + c('bold', c('magenta', '╔══════════════════════════════════════════════════════════╗')));
+  console.log(       c('bold', c('magenta', '║        🎲  BOARD GAMES API — STRESS TEST SUITE          ║')));
+  console.log(       c('bold', c('magenta', '╚══════════════════════════════════════════════════════════╝')));
+  console.log(c('dim', `  Started: ${new Date().toISOString()}\n`));
 
-        // ---------------------------------------------------------
-        // FASE 2: LETTURA SPECIFICA E AGGIORNAMENTO (GET BY ID & PUT)
-        // ---------------------------------------------------------
-        console.log("\n--- FASE 2: RICERCA E AGGIORNAMENTO DATI ---");
+  server = await start(MODE.TEST);
 
-        res = await makeRequest('GET', `/${createdGameId}`);
-        await assertTest(`GET /games/${createdGameId} -> Recupero record specifico`, 200, res);
+  // ── 1. WELCOME ────────────────────────────────────────────
+  section('1 · WELCOME ENDPOINT');
+  {
+    const r = await req('GET', '/welcome');
+    expect('GET /welcome → 200', r.status, 200);
+  }
 
-        res = await makeRequest('GET', `/999999`);
-        await assertTest("GET /games/999999 -> Gestione Risorsa Non Trovata", 404, res);
+  // ── 2. GET ALL GAMES (empty DB) ───────────────────────────
+  section('2 · GET /games — empty database');
+  {
+    const r = await req('GET', '/games');
+    expect('GET /games on empty DB → 200 or 204', r.status, 200, JSON.stringify(r.body)?.slice(0,80))
+      || expect('GET /games on empty DB → 204', r.status, 204);
+  }
 
-        const payloadUpdate = { Time: "180", Description: "Durata aggiornata via E2E" };
-        res = await makeRequest('PUT', `/${createdGameId}`, payloadUpdate);
-        await assertTest(`PUT /games/${createdGameId} -> Aggiornamento campi parziali`, 200, res);
+  // ── 3. POST — VALID CREATIONS ─────────────────────────────
+  section('3 · POST /games — valid creations');
+  const createdIds = [];
 
-        res = await makeRequest('PUT', `/${createdGameId}`, { CampoNonEsistente: "Valore" });
-        await assertTest(`PUT /games/${createdGameId} -> Rifiuto post-Sanitizzazione (Nessun campo valido)`, 400, res);
-
-        res = await makeRequest('PUT', `/${createdGameId}`, { MinAge: { age: 10 } });
-        await assertTest(`PUT /games/${createdGameId} -> Rifiuto per Type Checking (Oggetto invece di String/Number)`, 400, res);
-
-        // PAUSA INTERATTIVA
-        await askUserToContinue("Gioco aggiornato. Verifica che 'Time' sia 180 e la descrizione sia mutata.");
-
-        // ---------------------------------------------------------
-        // FASE 3: ELIMINAZIONE E VERIFICA (DELETE)
-        // ---------------------------------------------------------
-        console.log("\n--- FASE 3: RIMOZIONE DATI ---");
-
-        res = await makeRequest('DELETE', `/${createdGameId}`);
-        await assertTest(`DELETE /games/${createdGameId} -> Rimozione record`, 200, res);
-
-        res = await makeRequest('GET', `/${createdGameId}`);
-        await assertTest(`GET /games/${createdGameId} -> Verifica 404 post-rimozione`, 404, res);
-
-        res = await makeRequest('DELETE', `/${createdGameId}`);
-        await assertTest(`DELETE /games/${createdGameId} -> Gestione eliminazione record inesistente`, 404, res);
-
-        // PAUSA INTERATTIVA FINALE
-        await askUserToContinue("Gioco eliminato. Verifica che il DB test_games.db sia pulito.");
-
-        // ---------------------------------------------------------
-        // CHIUSURA E REPORT
-        // ---------------------------------------------------------
-        console.log("\n--- TEST CONCLUSI ---");
-        
-        server.close(() => {
-            console.log("\n====================================================");
-            console.log(`📊 REPORT FINALE E2E: ${testsPassed} PASSATI | ${testsFailed} FALLITI`);
-            
-            if (testsFailed === 0 && testsPassed > 0) {
-                console.log("🏆 ARCHITETTURA BACKEND VALIDATA CON SUCCESSO.");
-            } else {
-                console.log("⚠️ RILEVATE ANOMALIE. Consultare i log precedenti.");
-            }
-            console.log("====================================================\n");
-            
-            rl.close(); // Chiude l'interfaccia interattiva
-            process.exit(testsFailed === 0 ? 0 : 1);
-        });
-
-    } catch (error) {
-        console.error("\n❌ ERRORE CRITICO DI SISTEMA:");
-        console.error(error);
-        rl.close();
-        process.exit(1);
+  for (const [i, game] of [validGame(), validGame2(), validGame3()].entries()) {
+    const r = await req('POST', '/games', game);
+    const ok = expect(`POST valid game #${i+1} (${game.Name}) → 201`, r.status, 201, `id=${r.body?.id ?? r.body?._id ?? '?'}`);
+    if (ok && r.body) {
+      const id = r.body.id ?? r.body._id ?? r.body.ID;
+      if (id !== undefined) createdIds.push(id);
     }
+  }
+
+  // ── 4. GET ALL GAMES (populated) ──────────────────────────
+  section('4 · GET /games — after inserts');
+  {
+    const r = await req('GET', '/games');
+    expect('GET /games → 200', r.status, 200, `count=${Array.isArray(r.body) ? r.body.length : '?'}`);
+  }
+
+  // ── 5. GET BY ID ──────────────────────────────────────────
+  section('5 · GET /games/:id');
+  if (createdIds.length > 0) {
+    const r = await req('GET', `/games/${createdIds[0]}`);
+    expect(`GET /games/${createdIds[0]} → 200`, r.status, 200, `name=${r.body?.Name ?? r.body?.name ?? '?'}`);
+  } else {
+    log('GET /games/:id', 'WARN', 'No IDs captured from POST — skipping');
+  }
+  // Non-existent ID
+  {
+    const r = await req('GET', '/games/999999');
+    expect('GET /games/999999 → 404', r.status, 404);
+  }
+  // Invalid ID format
+  {
+    const r = await req('GET', '/games/not-a-valid-id');
+    expect('GET /games/not-a-valid-id → 400 or 404', r.status === 400 || r.status === 404, true, `got ${r.status}`);
+  }
+
+  // ── 6. GET WITH QUERY FILTERS ─────────────────────────────
+  section('6 · GET /games?key=value — query filters');
+  {
+    const r = await req('GET', '/games?MinPlayer=2');
+    expect('GET /games?MinPlayer=2 → 200', r.status, 200);
+  }
+  {
+    const r = await req('GET', '/games?MaxPlayer=4&MinAge=8');
+    expect('GET /games?MaxPlayer=4&MinAge=8 → 200', r.status, 200);
+  }
+  {
+    const r = await req('GET', '/games?Name=Catan');
+    expect('GET /games?Name=Catan → 200', r.status, 200, `count=${Array.isArray(r.body) ? r.body.length : '?'}`);
+  }
+  {
+    const r = await req('GET', '/games?Name=XYZNONEXISTENT');
+    expect('GET /games?Name=XYZNONEXISTENT → 200 empty or 404', r.status === 200 || r.status === 404, true, `got ${r.status}`);
+  }
+  {
+    const r = await req('GET', '/games?InvalidField=foo');
+    expect('GET /games?InvalidField=foo → 400 or 200', r.status === 400 || r.status === 200, true, `got ${r.status}`);
+  }
+
+  // ── 7. POST — MISSING REQUIRED FIELDS ────────────────────
+  section('7 · POST /games — missing required fields');
+  const requiredFields = ['Name', 'MinPlayer', 'MaxPlayer', 'Time', 'Location', 'MinAge'];
+  for (const field of requiredFields) {
+    const game = validGame();
+    delete game[field];
+    const r = await req('POST', '/games', game);
+    expect(`POST missing ${field} → 400`, r.status, 400, r.body?.error ?? r.body?.message ?? '');
+  }
+
+  // ── 8. POST — CONSTRAINT VIOLATIONS ──────────────────────
+  section('8 · POST /games — constraint violations');
+  const badCases = [
+    { label: 'MinPlayer=0 (< 1)',           patch: { MinPlayer: 0 } },
+    { label: 'MinPlayer=-5 (negative)',      patch: { MinPlayer: -5 } },
+    { label: 'MaxPlayer < MinPlayer',        patch: { MinPlayer: 5, MaxPlayer: 2 } },
+    { label: 'Time=0',                       patch: { Time: 0 } },
+    { label: 'Time=-10',                     patch: { Time: -10 } },
+    { label: 'MinAge=1 (< 2)',               patch: { MinAge: 1 } },
+    { label: 'MinAge=0',                     patch: { MinAge: 0 } },
+    { label: 'Year=1899 (< 1900)',           patch: { Year: 1899 } },
+    { label: 'Year=0',                       patch: { Year: 0 } },
+    { label: `Year=${new Date().getFullYear()+1} (future)`, patch: { Year: new Date().getFullYear() + 1 } },
+    { label: 'Location wrong format "1.A.2"',patch: { Location: '1.A.2' } },
+    { label: 'Location "a.1.2" (lowercase)', patch: { Location: 'a.1.2' } },
+    { label: 'Location "A1.2" (no dots)',    patch: { Location: 'A12' } },
+    { label: 'Location "" (empty)',          patch: { Location: '' } },
+    { label: 'UrlBigImage invalid protocol', patch: { UrlBigImage: 'ftp://example.com/img.jpg' } },
+    { label: 'UrlSmallImage not a URL',      patch: { UrlSmallImage: 'not-a-url' } },
+    { label: 'Name="" (empty string)',       patch: { Name: '' } },
+    { label: 'Name=null',                    patch: { Name: null } },
+    { label: 'MinPlayer="two" (string)',     patch: { MinPlayer: 'two' } },
+    { label: 'MaxPlayer="five" (string)',    patch: { MaxPlayer: 'five' } },
+    { label: 'Empty body {}',               game: {} },
+    { label: 'Completely wrong body',        game: { foo: 'bar', baz: 123 } },
+  ];
+
+  for (const { label, patch, game: overrideGame } of badCases) {
+    const body = overrideGame ?? { ...validGame(), ...patch };
+    const r = await req('POST', '/games', body);
+    expect(`POST ${label} → 400`, r.status, 400, r.body?.error ?? r.body?.message ?? '');
+  }
+
+  // ── 9. POST — DUPLICATE NAME ──────────────────────────────
+  section('9 · POST /games — duplicate Name conflict');
+  {
+    const r = await req('POST', '/games', validGame()); // Catan again
+    expect('POST duplicate Name "Catan" → 409', r.status, 409, r.body?.error ?? r.body?.message ?? '');
+  }
+
+  // ── 10. PUT — VALID UPDATES ───────────────────────────────
+  section('10 · PUT /games/:id — valid updates');
+  if (createdIds.length > 0) {
+    const id = createdIds[0];
+    const r = await req('PUT', `/games/${id}`, { ...validGame(), Time: 120, Description: 'Updated description' });
+    expect(`PUT /games/${id} → 200`, r.status, 200, `time=${r.body?.Time ?? '?'}`);
+  } else {
+    log('PUT valid update', 'WARN', 'No IDs captured — skipping');
+  }
+
+  // ── 11. PUT — PARTIAL UPDATE ──────────────────────────────
+  section('11 · PUT /games/:id — partial / edge updates');
+  if (createdIds.length > 0) {
+    const id = createdIds[0];
+    // Only required fields (strip optional)
+    const minimal = { Name: 'Catan', MinPlayer: 2, MaxPlayer: 4, MinAge: 10, Time: 90, Location: 'A.1.2' };
+    const r = await req('PUT', `/games/${id}`, minimal);
+    expect(`PUT minimal required fields → 200`, r.status, 200);
+  }
+
+  // ── 12. PUT — CONSTRAINT VIOLATIONS ──────────────────────
+  section('12 · PUT /games/:id — constraint violations');
+  if (createdIds.length > 0) {
+    const id = createdIds[0];
+    const putBad = [
+      { label: 'MaxPlayer < MinPlayer',      patch: { MinPlayer: 6, MaxPlayer: 2 } },
+      { label: 'Time=0',                     patch: { Time: 0 } },
+      { label: 'Location wrong format',      patch: { Location: 'wrong' } },
+      { label: 'Year=1800',                  patch: { Year: 1800 } },
+      { label: 'Name=null',                  patch: { Name: null } },
+      { label: 'Empty body',                 game: {} },
+    ];
+    for (const { label, patch, game: g } of putBad) {
+      const body = g ?? { ...validGame(), ...patch };
+      const r = await req('PUT', `/games/${id}`, body);
+      expect(`PUT ${label} → 400`, r.status, 400, r.body?.error ?? r.body?.message ?? '');
+    }
+  } else {
+    log('PUT constraint violations', 'WARN', 'No IDs — skipping');
+  }
+
+  // ── 13. PUT — NON-EXISTENT / INVALID ID ───────────────────
+  section('13 · PUT /games/:id — not found & bad id');
+  {
+    const r = await req('PUT', '/games/999999', validGame());
+    expect('PUT /games/999999 → 404', r.status, 404);
+  }
+  {
+    const r = await req('PUT', '/games/not-valid', validGame());
+    expect('PUT /games/not-valid → 400 or 404', r.status === 400 || r.status === 404, true, `got ${r.status}`);
+  }
+
+  // ── 14. PUT — DUPLICATE NAME ──────────────────────────────
+  section('14 · PUT /games/:id — duplicate Name conflict');
+  if (createdIds.length >= 2) {
+    // Try to rename game #2 to "Catan" which is already taken by #1
+    const r = await req('PUT', `/games/${createdIds[1]}`, { ...validGame2(), Name: 'Catan' });
+    expect('PUT rename to existing Name → 409', r.status, 409);
+  } else {
+    log('PUT duplicate name conflict', 'WARN', 'Need ≥2 IDs — skipping');
+  }
+
+  // ── 15. DELETE ────────────────────────────────────────────
+  section('15 · DELETE /games/:id');
+  // Delete non-existent
+  {
+    const r = await req('DELETE', '/games/999999');
+    expect('DELETE /games/999999 → 404', r.status, 404);
+  }
+  // Delete invalid id
+  {
+    const r = await req('DELETE', '/games/bad-id');
+    expect('DELETE /games/bad-id → 400 or 404', r.status === 400 || r.status === 404, true, `got ${r.status}`);
+  }
+  // Delete valid
+  if (createdIds.length > 0) {
+    const id = createdIds[createdIds.length - 1]; // delete last
+    const r = await req('DELETE', `/games/${id}`);
+    expect(`DELETE /games/${id} → 200 or 204`, r.status === 200 || r.status === 204, true, `got ${r.status}`);
+    // Confirm it's gone
+    const r2 = await req('GET', `/games/${id}`);
+    expect(`GET deleted /games/${id} → 404`, r2.status, 404);
+  }
+  // Double delete
+  if (createdIds.length > 0) {
+    const id = createdIds[createdIds.length - 1];
+    const r = await req('DELETE', `/games/${id}`);
+    expect(`DELETE already-deleted /games/${id} → 404`, r.status, 404);
+  }
+
+  // ── 16. STRESS — CONCURRENT WRITES ────────────────────────
+  section('16 · STRESS — 20 concurrent POSTs');
+  {
+    const promises = Array.from({ length: 20 }, (_, i) =>
+      req('POST', '/games', {
+        Name:      `StressGame_${i}`,
+        MinPlayer: 2,
+        MaxPlayer: Math.max(2, (i % 6) + 2),
+        MinAge:    6 + (i % 5),
+        Time:      30 + i * 3,
+        Location:  `${String.fromCharCode(65 + (i % 5))}.${(i % 4) + 1}.${(i % 3) + 1}`,
+        Year:      1980 + i,
+      })
+    );
+    const results = await Promise.all(promises);
+    const ok201  = results.filter(r => r.status === 201).length;
+    const ok409  = results.filter(r => r.status === 409).length;
+    const errors = results.filter(r => r.status !== 201 && r.status !== 409).length;
+    log(`20 concurrent POSTs: ${ok201} created, ${ok409} conflict, ${errors} error`,
+        errors === 0 ? 'PASS' : 'FAIL',
+        `statuses: ${results.map(r => r.status).join(' ')}`);
+    // collect new IDs
+    for (const r of results) {
+      if (r.status === 201 && r.body) {
+        const id = r.body.id ?? r.body._id ?? r.body.ID ?? r.body.gameId;;
+        if (id !== undefined) createdIds.push(id);
+      }
+    }
+  }
+
+  // ── 17. STRESS — RAPID GETs ───────────────────────────────
+  section('17 · STRESS — 30 concurrent GETs');
+  {
+    const promises = Array.from({ length: 30 }, () => req('GET', '/games'));
+    const res = await Promise.all(promises);
+    const ok = res.filter(r => r.status === 200).length;
+    log(`30 concurrent GETs: ${ok}/30 OK`, ok === 30 ? 'PASS' : 'FAIL');
+  }
+
+  // ── 18. STRESS — MIXED LOAD ───────────────────────────────
+  section('18 · STRESS — mixed GET + POST + DELETE');
+  {
+    const mix = [
+      ...Array.from({ length: 10 }, () => req('GET', '/games')),
+      ...Array.from({ length: 5 },  (_, i) => req('POST', '/games', {
+        Name:      `MixedStress_${i}`,
+        MinPlayer: 1,
+        MaxPlayer: 4,
+        MinAge:    8,
+        Time:      45,
+        Location:  `D.${i+1}.1`,
+      })),
+      ...(createdIds.length > 0
+        ? Array.from({ length: 3 }, (_, i) =>
+            req('GET', `/games/${createdIds[i % createdIds.length]}`)
+          )
+        : []),
+    ];
+    const res = await Promise.all(mix);
+    const ok  = res.filter(r => r.status >= 200 && r.status < 300).length;
+    const bad = res.filter(r => r.status >= 500).length;
+    log(`Mixed load ${mix.length} reqs: ${ok} success, ${bad} server errors`,
+        bad === 0 ? 'PASS' : 'FAIL');
+  }
+
+  // ── 19. EDGE CASES ────────────────────────────────────────
+  section('19 · EDGE CASES — boundary & exotic inputs');
+  {
+    // MaxPlayer === MinPlayer (valid boundary)
+    const r = await req('POST', '/games', {
+      Name: 'Solo Chess', MinPlayer: 1, MaxPlayer: 1, MinAge: 6, Time: 30, Location: 'E.1.1'
+    });
+    expect('POST MinPlayer=MaxPlayer=1 → 201', r.status, 201);
+  }
+  {
+    // Year = current year (max allowed)
+    const r = await req('POST', '/games', {
+      Name: 'NewGame2025', MinPlayer: 2, MaxPlayer: 4, MinAge: 12, Time: 60,
+      Location: 'F.1.1', Year: new Date().getFullYear()
+    });
+    expect(`POST Year=${new Date().getFullYear()} (max valid) → 201`, r.status, 201);
+  }
+  {
+    // Year = 1900 (min allowed)
+    const r = await req('POST', '/games', {
+      Name: 'AncientGame1900', MinPlayer: 2, MaxPlayer: 4, MinAge: 10, Time: 60,
+      Location: 'F.2.1', Year: 1900
+    });
+    expect('POST Year=1900 (min valid) → 201', r.status, 201);
+  }
+  {
+    // Very long description
+    const r = await req('POST', '/games', {
+      Name: 'LongDescGame', MinPlayer: 2, MaxPlayer: 4, MinAge: 8, Time: 30,
+      Location: 'G.1.1', Description: 'A'.repeat(5000)
+    });
+    expect('POST Description=5000 chars → 201 or 400', r.status === 201 || r.status === 400, true, `got ${r.status}`);
+  }
+  {
+    // SQL/NoSQL injection attempt in Name
+    const r = await req('POST', '/games', {
+      Name: "'; DROP TABLE games; --", MinPlayer: 2, MaxPlayer: 4, MinAge: 8, Time: 30, Location: 'H.1.1'
+    });
+    expect('POST injection in Name → 400 or 201 (sanitized)', r.status === 400 || r.status === 201, true, `got ${r.status}`);
+  }
+  {
+    // XSS in Description
+    const r = await req('POST', '/games', {
+      Name: 'XssGame', MinPlayer: 2, MaxPlayer: 4, MinAge: 8, Time: 30,
+      Location: 'I.1.1', Description: '<script>alert("xss")</script>'
+    });
+    expect('POST XSS in Description → 201 or 400', r.status === 201 || r.status === 400, true, `got ${r.status}`);
+  }
+  {
+    // Extra unknown fields
+    const r = await req('POST', '/games', {
+      ...validGame(), Name: 'ExtraFieldGame', Location: 'J.1.1', HackerField: 'evil', __proto__: { polluted: true }
+    });
+    expect('POST extra unknown fields → 201 or 400', r.status === 201 || r.status === 400, true, `got ${r.status}`);
+  }
+  {
+    // No Content-Type (send raw string)
+    const r = await fetch(`${BASE}/games`, { method: 'POST', body: 'plain text body' });
+    expect('POST plain text body → 400', r.status, 400);
+  }
+
+  // ── 20. CLEANUP — DELETE ALL CREATED ─────────────────────
+  section('20 · CLEANUP — delete all created games');
+  {
+    const allGames = await req('GET', '/games');
+    const games = Array.isArray(allGames.body) ? allGames.body : [];
+    let deleted = 0;
+    for (const g of games) {
+      const id = g.id ?? g._id ?? g.ID;
+      if (id !== undefined) {
+        const r = await req('DELETE', `/games/${id}`);
+        if (r.status === 200 || r.status === 204) deleted++;
+      }
+    }
+    const after = await req('GET', '/games');
+    const remaining = Array.isArray(after.body) ? after.body.length : '?';
+    log(`Deleted ${deleted}/${games.length} games, ${remaining} remaining`,
+        remaining === 0 || remaining === '?' ? 'PASS' : 'WARN');
+  }
+
+  // ── SUMMARY ───────────────────────────────────────────────
+  console.log('\n' + c('bold', c('magenta', '╔══════════════════════════════════════════════════════════╗')));
+  console.log(       c('bold', c('magenta', '║                     📊  RESULTS                         ║')));
+  console.log(       c('bold', c('magenta', '╚══════════════════════════════════════════════════════════╝')));
+  console.log(`  ${c('green', `✅  PASSED : ${String(passed).padStart(3)}`)}   ${c('red', `❌  FAILED : ${String(failed).padStart(3)}`)}   Total: ${passed + failed}`);
+  console.log(`  ${c('dim', `Finished: ${new Date().toISOString()}`)}`);
+
+  if (failed > 0) {
+    console.log('\n' + c('red', c('bold', '  Failed tests:')));
+    results.filter(r => r.status === 'FAIL').forEach(r => {
+      console.log(c('red', `    ✗ ${r.label}`) + (r.detail ? c('dim', ` — ${r.detail}`) : ''));
+    });
+  }
+  console.log();
+
+  server.close(() => process.exit(failed > 0 ? 1 : 0));
 }
 
-// Avvio automatico della suite
-runAdvancedSuite();
+run().catch(err => {
+  console.error(c('red', '\n💥 FATAL ERROR:'), err);
+  process.exit(1);
+});

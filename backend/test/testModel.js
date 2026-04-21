@@ -4,13 +4,14 @@
  * node test/testModel.js seed    - Populates the database with 20 sample games (MinAge included).
  * node test/testModel.js update  - Tests mass update logic on existing games.
  * node test/testModel.js delete  - Clears all games from the database.
+ * node test/testModel.js search  - Searches for games by name.
  * * Note: This utility script and its sample data were generated with AI assistance 
  * to validate the Data Access Layer (CRUD operations) and ensure database integrity. 
  * It is designed for local development and QA processes, providing a quick way 
  * to restore a consistent state in the test database.
  */
 
-import { addGame, updateGame, deleteGame, getAllGames } from '../models/games.js';
+import { addGame, updateGame, deleteGame, getAllGames, getGameByName } from '../models/games.js';
 import { connectDB, MODE } from '../DB/database.js';
 
 connectDB(MODE.TEST)
@@ -77,13 +78,47 @@ async function runTest() {
                 console.log(response);
             }
             console.log('✅ DB pulito!');
-        } else {
+        } else if (action === 'search') {
+            const { getGameByName } = await import('../models/games.js');
+            
+            console.log('🔍 Test Ricerca per Nome in corso...');
+            const allGames = await getAllGames();
+            if (allGames.length === 0) return console.log('❌ DB vuoto. Lancia prima il comando "seed".');
+
+            const searchTests = [
+                { term: "Ticket to Ride", exact: true, desc: "Match Esatto Esistente" },
+                { term: "Ticket", exact: true, desc: "Match Esatto su nome parziale (Deve fallire)" },
+                { term: "Ticket", exact: false, desc: "Match Parziale Esistente (Deve trovare i due Ticket)" },
+                { term: "Monopoly", exact: false, desc: "Match Parziale Non Esistente (Deve fallire)" },
+                { term: "L'Isola di Fuoco", exact: true, desc: "Test Sicurezza Apostrofo (Non deve crashare)" }
+            ];
+
+            for (const test of searchTests) {
+                console.log(`\n▶️ TEST: ${test.desc}`);
+                const result = await getGameByName(test.term, test.exact);
+                
+                console.log(result);
+    
+                if (result && result.length > 0) {
+                    if (test.exact) {
+                        console.log(`   ✅ Risultato: Trovato ID ${result[0].ID} -> ${result[0].Name}`);
+                    } else {
+                        console.log(`   ✅ Risultato: Trovati ${result.length} giochi!`);
+                        result.forEach(g => console.log(`      - ID ${g.ID} -> ${g.Name}`));
+                    }
+                } else {
+                    console.log(`   ❌ Risultato: Nessun gioco trovato.`);
+                }
+            }
+            console.log('\n✅ Test di ricerca conclusi!');
+        }else {
            console.log(`🛠️  Strumento di Test Database Giochi 🛠️
 
 Comandi disponibili:
 -   node testDB.js seed    -> Crea 20 giochi nel DB
 -   node testDB.js update  -> Modifica tutti i giochi (aggiunge tempo e cambia descrizione)
 -   node testDB.js delete  -> Svuota completamente il DB
+-   node testDB.js search  -> Cerca giochi per nome
             `);
         }
     } catch (error) { console.error('❌ Errore durante il test:', error); }
