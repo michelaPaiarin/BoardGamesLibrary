@@ -1,5 +1,7 @@
-backend/node_modules/
+node_modules/
+backup/*
+
+backend/DB/*.db
 backend/.DS_Store
-backend/*.db
-backend/DB/test_games.db
-backend/DB/games.db
+
+frontend/css/tailwindStyle.css

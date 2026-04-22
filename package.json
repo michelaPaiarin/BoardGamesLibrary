@@ -1,0 +1,28 @@
+{
+  "name": "boardgameslibrary",
+  "version": "1.0.0",
+  "private": true, 
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:backend": "npm start --workspace=backend",
+    "dev:frontend": "npm run watch:css --workspace=frontend",
+    "start": "concurrently -n \"SERVER,TAILWIND\" -c \"magenta.bold,blue.bold\" \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michelaPaiarin/BoardGamesLibrary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michelaPaiarin/BoardGamesLibrary/issues"
+  },
+  "homepage": "https://github.com/michelaPaiarin/BoardGamesLibrary#readme"
+}
