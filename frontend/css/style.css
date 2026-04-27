@@ -1,4 +1,24 @@
 @import "tailwindcss";
+
+@theme {
+  --color-wood-light: #d2b48c;
+  --color-wood-dark: #5d4037;
+  --color-shelf-accent: #8d6e63;
+  
+  --color-brand-primary: #6b46c1; 
+  --color-brand-secondary: #ec4899;
+
+  --color-text-title: #3e2723;
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+
+  --color-background-main: #d6bb90;
+
+  --font-family-title: 'Noteworty', cursive;
+  --font-family-body: 'Open Sans', sans-serif;
+}
+
 @import "./base.css";
-
-
+@import "./components/buttons.css";
+@import "./components/navbar.css";
+@import "./components/footer.css";
