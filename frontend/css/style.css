@@ -28,5 +28,6 @@
 @import "./components/buttons.css";
 @import "./components/navbar.css";
 @import "./components/footer.css";
+@import "./components/gameCard.css";
 
 @import "./index.css";

@@ -1,0 +1,42 @@
+.game-card {
+    @apply  bg-white shadow-sm
+            border border-wood-light/50 rounded-lg 
+            overflow-hidden
+            w-full max-w-[300px] mx-auto
+            hover:shadow-md transition-shadow;
+}
+
+.game-img {
+    @apply  w-full h-auto aspect-4/3 object-contain object-center bg-gray-100;
+}
+
+.game-information-section {
+    @apply p-4 flex flex-col flex-grow;
+}
+
+.game-title {
+    @apply font-bold text-lg text-text-title truncate;
+}
+
+.game-data-section {
+    @apply flex justify-between items-center mt-3 text-sm text-text-secondary
+}
+
+.game-data-section span {
+    @apply bg-gray-100 px-2 py-1 rounded;
+}
+
+.game-position-section {
+    @apply  mt-auto pt-3
+            border-t border-gray-100
+            text-xs font-semibold text-wood-dark
+            flex justify-between items-center
+}
+
+.game-card-actions {
+    @apply flex gap-2;
+}
+
+.game-action-btn {
+    @apply p-1.5 rounded bg-gray-100 text-gray-500 hover:bg-brand-primary hover:text-white transition-colors;
+}
