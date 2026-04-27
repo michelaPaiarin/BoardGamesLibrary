@@ -1,0 +1,12 @@
+nav {
+    @apply bg-wood-dark px-6 py-3 shadow-md
+            flex items-center gap-3;
+}
+
+.navbar-logo {
+    @apply h-10 w-auto;
+}
+
+.navbar-title {
+    @apply text-2xl font-bold font-family-title text-wood-light;
+}
