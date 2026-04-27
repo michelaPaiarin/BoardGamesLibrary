@@ -1,0 +1,16 @@
+button {
+    @apply  px-4 py-2 rounded shadow-md
+            transition-colors duration-300
+            disabled:opacity-50 disabled:cursor-not-allowed
+            bg-gray-500 hover:bg-gray-400 text-white; /* Default color */
+}
+
+
+.quickFilterButton, .allGameButton {
+    @apply  bg-wood-dark font-bold
+            hover:bg-wood-light ;
+}
+
+.primaryButton      { @apply  bg-brand-primary      hover:bg-brand-primary-hover;   }
+.secondaryButton    { @apply  bg-brand-secondary    hover:bg-brand-secondary-hover; }
+.dangerButton       { @apply  bg-brand-danger       hover:bg-brand-danger-hover;    }

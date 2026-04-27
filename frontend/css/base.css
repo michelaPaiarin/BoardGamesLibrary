@@ -1,3 +1,5 @@
-body    { @apply border-0 p-0 bg-gray-100; }
-nav     { @apply bg-gradient-to-r from-purple-500 to-pink-500 p-4 flex items-center justify-between shadow-md;}
+body    { @apply border-0 p-0 bg-background-main; }
 main    { @apply container mx-auto px-4; }
+
+h1 { @apply text-4xl font-bold text-center mb-2 mt-4 text-text-title font-family-title; }
+p  { @apply text-base text-left mb-4 text-text-primary; }

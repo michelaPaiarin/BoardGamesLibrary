@@ -17,3 +17,29 @@
 #content-title-section h2 {
     @apply text-2xl font-bold text-text-title;
 }
+
+/*------ main-section ------ */
+
+#main-section {
+    @apply  flex flex-col
+            md:flex-row gap-8;
+}
+
+#main-home {
+    @apply  w-full min-h-125
+            md:w-3/4;
+}
+
+#main-right-section {
+    @apply  w-full  flex flex-col gap-4 text-left
+            md:w-1/4;
+}
+
+.main-right-container{
+    @apply  w-full bg-white rounded-lg shadow-md p-5
+            border border-gray-100;
+}
+
+#quick-filter-grid {
+    @apply grid grid-cols-2 gap-2;
+}

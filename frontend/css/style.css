@@ -4,9 +4,6 @@
   --color-wood-light: #d2b48c;
   --color-wood-dark: #5d4037;
   --color-shelf-accent: #8d6e63;
-  
-  --color-brand-primary: #6b46c1; 
-  --color-brand-secondary: #ec4899;
 
   --color-text-title: #3e2723;
   --color-text-primary: #333333;
@@ -16,6 +13,15 @@
 
   --font-family-title: 'Noteworty', cursive;
   --font-family-body: 'Open Sans', sans-serif;
+
+  --color-brand-primary: #065f46;         /* emerald-800 */
+  --color-brand-primary-hover: #059669;   /* emerald-600 */
+  
+  --color-brand-secondary: #78716c;       /* stone-500 */
+  --color-brand-secondary-hover: #a8a29e; /* stone-400 */
+  
+  --color-brand-danger: #b91c1c;          /* red-700 */
+  --color-brand-danger-hover: #ef4444;    /* red-500 */
 }
 
 @import "./base.css";
