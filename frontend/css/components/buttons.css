@@ -7,7 +7,7 @@ button {
 
 
 .quickFilterButton, .allGameButton {
-    @apply  bg-wood-dark font-bold
+    @apply  bg-wood-dark font-bold rounded-lg
             hover:bg-wood-light ;
 }
 
