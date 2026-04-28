@@ -23,6 +23,7 @@ async function printAllGames(filter = {}) {
     }
 
     const games = await getAllGames();
+    console.log("Giochi ricevuti dal server:", games);
     const container = document.getElementById('main-home');
     container.innerHTML = ''; 
 

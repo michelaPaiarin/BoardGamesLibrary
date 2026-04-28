@@ -9,7 +9,11 @@
   --color-text-primary: #333333;
   --color-text-secondary: #666666;
 
-  --color-background-main: #d6bb90;
+  --color-background-main: #e8dcc7; 
+  --color-card-bg: #fdfaf5;         
+  --color-ink-dark: #2d1b14;        
+  --color-ink-light: #795c4b;       
+  --color-border-warm: #a6845e;
 
   --font-family-title: 'Noteworty', cursive;
   --font-family-body: 'Open Sans', sans-serif;
