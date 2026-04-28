@@ -4,4 +4,5 @@ backup/*
 backend/DB/*.db
 backend/.DS_Store
 
+package-lock.json
 frontend/css/tailwindStyle.css
