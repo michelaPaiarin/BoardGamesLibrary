@@ -1,4 +1,5 @@
 import { getAllGames } from "./api.js";
+import { loadModifiedGames } from "./main.js";
 
 const GAME_CARD_PATH = './components/gameCard.html'
 
@@ -16,7 +17,12 @@ async function getTemplate() {
     }
 }
 
-async function printAllGames(filter = {}) {
+async function updateGamesDetails(gameList){
+    const gameNameElement = document.getElementById('total-games');
+    if (gameNameElement) { gameNameElement.textContent = gameList.length; }
+}
+
+export async function printAllGames(filter = {}) {
     if (Object.keys(filter).length > 0) {
         console.log("Hai chiesto i seguiti filtri " + JSON.stringify(filter));
         console.log("Ci pensiamo per ora eccoteli tutti");
@@ -24,6 +30,7 @@ async function printAllGames(filter = {}) {
 
     const games = await getAllGames();
     console.log("Giochi ricevuti dal server:", games);
+    updateGamesDetails(games);
     const container = document.getElementById('main-home');
     container.innerHTML = ''; 
 
@@ -46,9 +53,9 @@ async function printAllGames(filter = {}) {
         tempDiv.querySelector('.game-players').textContent = `👥 ${game.MinPlayer}-${game.MaxPlayer}`;
         tempDiv.querySelector('.game-time').textContent = `⏱️ ${game.Time} min`;
         tempDiv.querySelector('.game-location').textContent = game.Location;
+        tempDiv.querySelector('.game-action-btn').dataset.gameId = game.Id;
+        tempDiv.querySelector('.game-action-btn').onclick = () => { loadModifiedGames(game); };
 
         container.appendChild(tempDiv.firstElementChild);
     }); 
 }
-
-document.addEventListener('DOMContentLoaded', printAllGames);
