@@ -3,9 +3,11 @@ const FOOTER_PATH = './components/footer.html';
 
 const MAIN_ALL_GAMES_PATH = './components/mainAllGames.html';
 const MAIN_MODIFIED_GAMES_PATH = './components/mainModifiedGames.html';
+const MAIN_DETAIL_GAME_PATH = './components/mainDetailGame.html';
 
 const MAIN_ALL_GAMES_TITLE = 'Tutti i giochi';
 const MAIN_MODIFIED_GAMES_TITLE = `Modifica gioco: `;
+const MAIN_DETAIL_GAME_TITLE = `Dettagli gioco: `;
 
 const MAIN_TITLE_ID = 'content-title';
 
@@ -13,11 +15,7 @@ const load = [{'path': NAVBAR_PATH, 'placeholderId': 'navbar-placeholder'},
               {'path': FOOTER_PATH, 'placeholderId': 'footer-placeholder'},
               {'path': MAIN_ALL_GAMES_PATH, 'placeholderId': 'main-placeholder'}];
 
-export async function loadComponents() {
-    for (const item of load) {
-        await loadComponent(item.path, item.placeholderId);
-    }
-}
+export async function loadComponents() { for (const item of load) { await loadComponent(item.path, item.placeholderId); }}
 
 export async function loadComponent(path, placeholderId) {
     try {
@@ -43,4 +41,13 @@ export async function loadMainModifiedGames(gameName){
     else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
     
     await loadComponent(MAIN_MODIFIED_GAMES_PATH, 'main-placeholder');
+}
+
+export async function loadMainDetailGame(gameName){
+    const titleEl = document.getElementById(MAIN_TITLE_ID);
+    
+    if(titleEl) { titleEl.innerText = `${MAIN_DETAIL_GAME_TITLE} ${gameName}`; }
+    else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
+    
+    await loadComponent(MAIN_DETAIL_GAME_PATH, 'main-placeholder');
 }

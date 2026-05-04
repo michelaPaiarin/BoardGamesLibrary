@@ -1,5 +1,5 @@
 import { getAllGames } from "./api.js";
-import { loadModifiedGames } from "./main.js";
+import { loadModifiedGames, loadDetailGame } from "./main.js";
 
 const GAME_CARD_PATH = './components/gameCard.html'
 
@@ -54,8 +54,13 @@ export async function printAllGames(filter = {}) {
         tempDiv.querySelector('.game-time').textContent = `⏱️ ${game.Time} min`;
         tempDiv.querySelector('.game-location').textContent = game.Location;
         tempDiv.querySelector('.game-action-btn').dataset.gameId = game.Id;
-        tempDiv.querySelector('.game-action-btn').onclick = () => { loadModifiedGames(game); };
+        
+        tempDiv.querySelector('.game-action-btn').onclick = (event) => {
+            event.stopPropagation();
+            loadModifiedGames(game);
+        };
 
+        tempDiv.firstElementChild.onclick = () => { loadDetailGame(game); };
         container.appendChild(tempDiv.firstElementChild);
     }); 
 }
