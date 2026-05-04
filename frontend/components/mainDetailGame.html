@@ -1,6 +1,34 @@
 <main id="main-section">
-    <div id="main-div">
-        <p> Visuliazza gioco <span id="game-name"></span></p>
+    <div id="game">
+        <div id="game-overview">
+            <img id="game-image" src="" alt="Game Image">
+            <div id="game-information">
+                <div id="game-header">
+                    <div id="game-title">
+                        <h2 id="game-name"></h2>
+                    </div>
+                    <div id = "game-actions">
+                        <button id="edit-game-btn" aria-label="Modifica gioco" title="Modifica">✏️</button>
+                        <button id="delete-game-btn" aria-label="Elimina gioco" title="Elimina">🗑️</button>
+                    </div>
+                </div>
+                <div id="game-details" class="flex flex-wrap gap-3 mt-4">
+                    <span id="game-players" class="badge-info" title="Giocatori"             >👥 <span id="game-players-val"></span></span>
+                    <span id="game-time"    class="badge-info" title="Durata"                >⏱️ <span id="game-time-val"></span> min</span>
+                    <span id="game-age"     class="badge-info" title="Età Minima"            >👶 <span id="game-age-val"></span>+</span>
+                    <span id="game-year"    class="badge-info" title="Anno di Pubblicazione" >📅 <span id="game-year-val"></span></span>
+                </div>
+            </div>
+        </div>
+        <div id="game-description">
+            <h3>Descrizione:</h3>
+            <p id="game-description-text"></p>
+        </div>
+        <div id="game-position">
+            <span>📍 <span id="game-location"></span></span>  
+        </div>
     </div>
-    <button id="navigate-back-btn">Torna alla home</button>
+    <div id="page-actions">
+        <button id="navigate-back-btn">Torna alla home</button>
+    </div>
 </main>

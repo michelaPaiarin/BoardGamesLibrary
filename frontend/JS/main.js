@@ -1,6 +1,8 @@
 import { loadComponents, loadMainModifiedGames, loadMainDetailGame} from "./loadComponent.js";
 import { printAllGames } from "./gamesUI.js";
 
+import {fillGameDetails} from "./components/gameDetail.js";
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Avvio dell'applicazione...");
     await loadAllGameList();
@@ -17,6 +19,8 @@ export const loadModifiedGames = async function(game) {
 export const loadDetailGame = async function(game) {
     console.log("Hai cliccato su " + game.Name);
     await loadMainDetailGame(game.Name);
+
+    await fillGameDetails(game);
     
     const backBtn = document.getElementById('navigate-back-btn');
     if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }

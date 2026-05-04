@@ -33,5 +33,6 @@
 @import "./components/navbar.css";
 @import "./components/footer.css";
 @import "./components/gameCard.css";
+@import "./components/mainDetailGame.css";
 
 @import "./index.css";
