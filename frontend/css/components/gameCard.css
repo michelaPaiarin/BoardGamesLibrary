@@ -24,10 +24,6 @@
     @apply flex justify-between items-center mt-3 text-sm text-ink-light font-semibold;
 }
 
-.game-data-section span {
-    @apply bg-background-main px-2 py-1 rounded-md border border-border-warm;
-}
-
 .game-position-section {
     @apply  mt-4 pt-3
             border-t-2 border-border-warm border-dashed

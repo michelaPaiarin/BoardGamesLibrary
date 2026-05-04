@@ -3,3 +3,5 @@ main    { @apply container mx-auto px-4; }
 
 h1 { @apply text-4xl font-bold text-center mb-2 mt-4 text-text-title font-family-title; }
 p  { @apply text-base text-left mb-4 text-text-primary; }
+
+.badge-info {  @apply bg-background-main px-2 py-1 rounded-md border border-border-warm; }
