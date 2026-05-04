@@ -1,6 +1,10 @@
 # BoardGamesLibrary
 Applicazione Web Full-Stack per la gestione di una collezione di giochi da tavolo. Progetto per il corso di Applicazioni Web (A.A. 2024/25) - Uniud. Sviluppato con Node.js, Express.js e SQLite, seguendo il paradigma REST
 
+## Requisiti
+- Node.js v20 o superiore (consigliata v22 LTS)
+- npm v10 o superiore
+
 ## Installazione ed esecuzione
 Per installare il progetto seguire i seguenti passi:
 1. Aprire il terminale nella cartella principale

@@ -1,7 +1,7 @@
 /*------ title-section ------ */
 
 #title-section {
-    @apply text-center py-5 px-4 max-w-2xl mx-auto;
+    @apply text-center py-5 px-4 mx-auto;
 }
 
 #title-section p {
@@ -36,8 +36,8 @@
 }
 
 .main-right-container{
-    @apply  w-full bg-white rounded-lg shadow-md p-5
-            border border-gray-100;
+    @apply  w-full bg-card-bg rounded-lg shadow-lg p-5
+            border-2 border-border-warm;
 }
 
 #quick-filter-grid {
