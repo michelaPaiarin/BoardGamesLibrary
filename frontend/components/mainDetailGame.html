@@ -1,4 +1,4 @@
-<main id="main-section">
+<section class="main-detail-section">
     <div id="game">
         <div id="game-overview">
             <img id="game-image" src="" alt="Game Image">
@@ -8,8 +8,8 @@
                         <h2 id="game-name"></h2>
                     </div>
                     <div id = "game-actions">
-                        <button id="edit-game-btn" aria-label="Modifica gioco" title="Modifica">✏️</button>
-                        <button id="delete-game-btn" aria-label="Elimina gioco" title="Elimina">🗑️</button>
+                        <button id="edit-game"      class="primaryButton"   aria-label="Modifica gioco" title="Modifica">✏️</button>
+                        <button id="delete-game"    class="dangerButton"    aria-label="Elimina gioco"  title="Elimina">🗑️</button>
                     </div>
                 </div>
                 <div id="game-details" class="flex flex-wrap gap-3 mt-4">
@@ -17,6 +17,7 @@
                     <span id="game-time"    class="badge-info" title="Durata"                >⏱️ <span id="game-time-val"></span> min</span>
                     <span id="game-age"     class="badge-info" title="Età Minima"            >👶 <span id="game-age-val"></span>+</span>
                     <span id="game-year"    class="badge-info" title="Anno di Pubblicazione" >📅 <span id="game-year-val"></span></span>
+                    <span id="game-location"class="badge-info" title="Posizione"             >📍 <span id="game-location-val"></span></span>
                 </div>
             </div>
         </div>
@@ -24,11 +25,8 @@
             <h3>Descrizione:</h3>
             <p id="game-description-text"></p>
         </div>
-        <div id="game-position">
-            <span>📍 <span id="game-location"></span></span>  
-        </div>
     </div>
     <div id="page-actions">
         <button id="navigate-back-btn">Torna alla home</button>
     </div>
-</main>
+</div>
