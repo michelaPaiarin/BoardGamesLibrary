@@ -28,13 +28,13 @@
   --color-brand-danger-hover: #ef4444;    /* red-500 */
 }
 
-@import "./base.css";
 
 /*------ ui-components ------ */
 
-@import "./components/buttons.css";
-@import "./components/navbar.css";
-@import "./components/footer.css";
+@import "./ui/base.css";
+@import "./ui/buttons.css";
+@import "./ui/navbar.css";
+@import "./ui/footer.css";
 
 /*------ domain-components ------ */
 
@@ -42,5 +42,5 @@
 
 /*------ views-components ------ */
 
-@import "./components/mainDetailGame.css";
-@import "./components/home.css";
+@import "./views/mainDetailGame.css";
+@import "./views/home.css";
