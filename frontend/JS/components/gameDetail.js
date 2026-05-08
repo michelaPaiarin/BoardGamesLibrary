@@ -1,3 +1,5 @@
+import { loadModifiedGames, loadDetailGame } from "../main.js";
+
 const ID = {
     Name: 'game-name',
     Image: 'game-image',
@@ -6,7 +8,7 @@ const ID = {
     MinAge: 'game-age-val',
     Year: 'game-year-val',
     Description: 'game-description-text',
-    Location: 'game-location',
+    Location: 'game-location-val',
 }
 
 export async function fillGameDetails(game) {
@@ -24,4 +26,12 @@ export async function fillGameDetails(game) {
             }
         }
     }
+
+    document.getElementById("edit-game").onclick = (event) => {
+        loadModifiedGames(game);
+    };
+
+    document.getElementById("delete-game").onclick = (event) => {
+        console.log("Cancellazione gioco:", game);
+    };
 }
