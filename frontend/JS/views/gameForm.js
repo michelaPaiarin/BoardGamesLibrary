@@ -1,3 +1,6 @@
+import { loadAllGameList } from '../main.js';
+import { getGameById } from '../utilities/api.js';
+
 const ID = {
     Name: 'name-input',
     MinPlayer: 'min-players-input',
@@ -11,7 +14,13 @@ const ID = {
     Description: 'description-input',
 }
 
-export function fillGameForm(game) {
+// note: if error occurs the caller handle it
+export async function fillGameForm(id) {
+    const game = await getGameById(id);
+    await fillGameFormWithGame(game);
+}
+
+async function fillGameFormWithGame(game) {
     console.log("Riempio il form con i dati del gioco:", game);
     for (const key in ID) {
         const element = document.getElementById(ID[key]);
@@ -23,11 +32,11 @@ export function fillGameForm(game) {
     }
 }
 
-export function gameSaveForm(event) {
+export async function gameSaveForm(event) {
     event.preventDefault(); 
 
     const form = event.target; 
-    const method = event.target.dataset.apiMethod;
+    const method = event.target.dataset.method;
     const gameData = Object.fromEntries(new FormData(form));
 
     console.log("Operazione:", method);

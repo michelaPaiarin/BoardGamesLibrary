@@ -1,4 +1,6 @@
-import { loadComponents, loadMainAddGame, loadMainModifiedGames, loadMainDetailGame} from "./loadComponent.js";
+import * as Loader                    from "./utilities/loader.js";
+import * as LoaderError               from "./utilities/loaderError.js";
+
 import { printAllGames              } from "./views/gamesList.js";
 import { fillGameDetails            } from "./views/gameDetail.js";
 import { gameSaveForm, fillGameForm } from "./views/gameForm.js";
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 export const loadAddGame = async function() {
     console.log("Hai cliccato su Aggiungi Gioco");
-    await loadMainAddGame();
+    await Loader.loadMainAddGame();
 
     const backBtn = document.getElementById('navigate-back-btn');
     if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
@@ -20,33 +22,42 @@ export const loadAddGame = async function() {
     form.onsubmit = (event) => gameSaveForm(event);
 };
 
-export const loadModifiedGames = async function(game) {
-    console.log("Hai cliccato su " + game.Name);
-    await loadMainModifiedGames(game.Name); 
-
-    fillGameForm(game);
+export const loadModifiedGames = async function(id) {
+    console.log("Hai cliccato sul gioco con ID = " + id);
     
-    const backBtn = document.getElementById('navigate-back-btn');
-    if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
+    await Loader.loadMainModifiedGames(); 
+    try {
+        await fillGameForm(id);
     
-    let form = document.getElementById("game-form");
-    form.dataset.method = "PUT";
-    form.onsubmit = (event) => gameSaveForm(event);
+        const backBtn = document.getElementById('navigate-back-btn');
+        if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
+    
+        let form = document.getElementById("game-form");
+        form.dataset.method = "PUT";
+        form.onsubmit = (event) => gameSaveForm(event);
+    } catch (error) {
+        console.error("Errore durante il caricamento dei dettagli del gioco:", error);
+        LoaderError.showErrorGetGame(loadAllGameList);
+    }
 };
 
-export const loadDetailGame = async function(game) {
-    console.log("Hai cliccato su " + game.Name);
-    await loadMainDetailGame(game.Name);
-
-    await fillGameDetails(game);
+export const loadDetailGame = async function(id) {
+    console.log("Hai cliccato sul gioco con ID = " + id);
+    try {
+        await Loader.loadMainDetailGame(id);
+        await fillGameDetails(id);
     
-    const backBtn = document.getElementById('navigate-back-btn');
-    if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
+        const backBtn = document.getElementById('navigate-back-btn');
+        if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
+    }catch (error) {
+        console.error("Errore durante il caricamento dei dettagli del gioco:", error);
+        LoaderError.showErrorGetGame(loadAllGameList);
+    }    
 };
 
 export const loadAllGameList = async function() {
     console.log("Caricamento della lista di tutti i giochi...");
-    await loadComponents();
+    await Loader.loadComponents();
     await printAllGames();
 
     document.querySelector('.addGameButton').addEventListener('click', () => loadAddGame(''));

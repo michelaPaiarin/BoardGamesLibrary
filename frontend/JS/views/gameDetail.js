@@ -1,4 +1,5 @@
 import { loadModifiedGames, loadDetailGame } from "../main.js";
+import { getGameById } from '../utilities/api.js';
 
 const ID = {
     Name: 'game-name',
@@ -11,7 +12,13 @@ const ID = {
     Location: 'game-location-val',
 }
 
-export async function fillGameDetails(game) {
+// note: if error occurs the caller handle it
+export async function fillGameDetails(id) {
+    const game = await getGameById(id);
+    await fillGameFormWithGame(game);
+}
+
+async function fillGameFormWithGame(game) {
     console.log("Riempio i dettagli del gioco:", game);
 
     for (const key in ID) {
@@ -28,10 +35,10 @@ export async function fillGameDetails(game) {
     }
 
     document.getElementById("edit-game").onclick = (event) => {
-        loadModifiedGames(game);
+        loadModifiedGames(game.ID);
     };
 
     document.getElementById("delete-game").onclick = (event) => {
-        console.log("Cancellazione gioco:", game);
+        console.log("Cancellazione gioco:", game.ID);
     };
 }
