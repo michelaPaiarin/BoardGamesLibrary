@@ -6,6 +6,7 @@ const MAIN_FORM_GAMES_PATH = './components/mainFormGame.html';
 const MAIN_DETAIL_GAME_PATH = './components/mainDetailGame.html';
 
 const MAIN_ALL_GAMES_TITLE = 'Tutti i giochi';
+const MAIN_ADD_GAME_TITLE = `Aggiungi nuovo gioco`;
 const MAIN_MODIFIED_GAMES_TITLE = `Modifica gioco: `;
 const MAIN_DETAIL_GAME_TITLE = `Dettagli gioco: `;
 
@@ -30,8 +31,18 @@ export async function loadComponent(path, placeholderId) {
 
 export async function loadMainAllGames(){
     const titleEl = document.getElementById(MAIN_TITLE_ID);
+    
     if(titleEl) { titleEl.innerText = MAIN_ALL_GAMES_TITLE; }
     await loadComponent(MAIN_ALL_GAMES_PATH, 'main-placeholder');
+}
+
+export async function loadMainAddGame(gameName){
+    const titleEl = document.getElementById(MAIN_TITLE_ID);
+    
+    if(titleEl) { titleEl.innerText = `${MAIN_ADD_GAME_TITLE} ${gameName}`; }
+    else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
+
+    await loadComponent(MAIN_FORM_GAMES_PATH, 'main-placeholder');
 }
 
 export async function loadMainModifiedGames(gameName){
