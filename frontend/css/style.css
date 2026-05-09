@@ -42,5 +42,5 @@
 
 /*------ views-components ------ */
 
+@import "./views/mainAllGames.css";
 @import "./views/mainDetailGame.css";
-@import "./views/home.css";

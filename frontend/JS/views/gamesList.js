@@ -1,5 +1,5 @@
-import { getAllGames } from "./api.js";
-import { loadModifiedGames, loadDetailGame } from "./main.js";
+import { getAllGames } from "../api.js";
+import { loadModifiedGames, loadDetailGame } from "../main.js";
 
 const GAME_CARD_PATH = './components/gameCard.html'
 

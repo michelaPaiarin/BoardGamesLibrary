@@ -1,9 +1,9 @@
 const NAVBAR_PATH = './components/navbar.html';
 const FOOTER_PATH = './components/footer.html';
 
-const MAIN_ALL_GAMES_PATH = './components/mainAllGames.html';
-const MAIN_FORM_GAMES_PATH = './components/mainFormGame.html';
-const MAIN_DETAIL_GAME_PATH = './components/mainDetailGame.html';
+const MAIN_ALL_GAMES_PATH = './views/mainAllGames.html';
+const MAIN_FORM_GAMES_PATH = './views/mainFormGame.html';
+const MAIN_DETAIL_GAME_PATH = './views/mainDetailGame.html';
 
 const MAIN_ALL_GAMES_TITLE = 'Tutti i giochi';
 const MAIN_ADD_GAME_TITLE = `Aggiungi nuovo gioco`;
