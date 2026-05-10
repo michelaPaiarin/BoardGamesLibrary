@@ -33,6 +33,7 @@
 
 @import "./ui/base.css";
 @import "./ui/buttons.css";
+@import "./ui/forms.css";
 @import "./ui/navbar.css";
 @import "./ui/footer.css";
 
@@ -43,4 +44,5 @@
 /*------ views-components ------ */
 
 @import "./views/mainAllGames.css";
+@import "./views/mainFormGame.css";
 @import "./views/mainDetailGame.css";

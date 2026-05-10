@@ -1,0 +1,42 @@
+/*------ form-card ------ */
+
+.form-card {
+    @apply  w-full max-w-6xl bg-card-bg p-8 rounded-xl shadow-lg
+            border-2 border-border-warm;
+}
+
+/*------ form-row ------ */
+
+.form-row {
+    @apply  flex flex-col gap-4
+            md:flex-row md:gap-6 mb-4;
+}
+
+.form-button-row {
+    @apply  flex gap-4 mt-8 pt-6
+            justify-end
+            border-t-2 border-border-warm border-dashed;
+}
+
+/*------ form-group ------ */
+
+.form-group         { @apply flex flex-col flex-1 gap-1; }
+.form-group label   { @apply text-sm font-bold text-wood-dark; }
+
+.form-group input, .form-group textarea {
+    @apply  w-full p-2 bg-white text-ink-dark 
+            border border-border-warm rounded-md 
+            focus:outline-none focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary
+            transition-colors;
+}
+
+.form-group textarea {
+    @apply h-50;
+}
+
+/*------ input-group ------ */
+
+.input-group        { @apply flex items-center gap-2;   }
+.input-group input  { @apply w-full text-center;        }
+.input-group span   { @apply font-bold text-ink-dark; }
+

@@ -1,0 +1,4 @@
+#main-modified-section {
+    @apply flex flex-col items-center gap-8 ;
+}
+
