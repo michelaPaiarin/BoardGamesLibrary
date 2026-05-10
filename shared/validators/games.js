@@ -42,16 +42,25 @@ function checkValueRequire(fieldName, value){
 }
 
 export function checkRequireFields(game, isUpdate){
+    let validationResult = { valid: false, errors: [] };
+
     for (const field of GAME_CONSTRAINTS.RequireFields) {
         const value = game[field];
         if(value === undefined && !isUpdate){
-            return { valid: false, message: `Field '${field}' is required.` };
+            validationResult.errors.push({
+                field: field,
+                message: `Field '${field}' is required.`
+            });
         }else {
             const check = checkValueRequire(field, game[field]);
-            if (!check.valid){ return check; }
+            if (!check.valid){ 
+                validationResult.errors.push({ field: field, message: check.message });
+            }
         }
     }
-    return {valid: true};
+
+    if (validationResult.errors.length === 0) { validationResult.valid = true; }
+    return validationResult;
 }
 
 
@@ -72,22 +81,32 @@ function validateObjectGame(game) {
 export function validateGame(game, isUpdate = false) {
     let validationResult = validateObjectGame(game);
     if (!validationResult.valid) { return validationResult; }
+    
+    let validationReturn = { valid: false, errors: [] };
 
-    validationResult = checkRequireFields(game, isUpdate);                                           
-    if (!validationResult.valid) { return validationResult;  }
+    validationResult = checkRequireFields(game, isUpdate);       
+    if (!validationResult.valid) { validationReturn.errors = validationReturn.errors.concat(validationResult.errors);}
 
+    // Validate fields value if present, ignore unknown fields and skip validation for undefined or null optional fields
     for (const [field, value] of Object.entries(game)) {
         if (!GAME_CONSTRAINTS.Fields.includes(field))               { continue; }   // Ignore unknown fields
         else {
             if (game[field] === undefined || game[field] === null)  { continue; }   // Skip validation for undefined or null optional fields
 
             validationResult = fieldsValidator(field)(value);
-            if (!validationResult.valid) { return validationResult; }
+            if (!validationResult.valid) { validationReturn.errors.push(
+                { field: field, message: validationResult.message });
+            }
         }
     }
     
-    if (!isUpdate) { return validatePlayerCount(game.MinPlayer, game.MaxPlayer)}    // If it's a new game, last checks
-    return { valid: true };
+    if (game.MinPlayer !== undefined && game.MaxPlayer !== undefined) {
+        let playerValidation =  validatePlayerCount(game.MinPlayer, game.MaxPlayer);  
+        if (!playerValidation.valid) { validationReturn.errors.push( { field: 'Player', message: playerValidation.message });}
+    }
+
+    if (validationReturn.errors.length == 0) {validationReturn.valid = true; }
+    return validationReturn;
 }
 
 function validateName(name) {

@@ -23,7 +23,7 @@ export async function addGame(game) {
     catch(error)            { throw { status: 400, message: error.message }; }
     
     let validation = GamesValidator.validateGame(game);
-    if (!validation.valid)  { throw { status: 400, message: validation.message}; }
+    if (!validation.valid)  { throw { status: 400, message: 'Invalid game data', errors: validation.errors}; }
 
     let existingGame = (await GamesModel.getGameByName(game.Name, true))[0];
     if (existingGame)       { throw { status: 409, message: 'A game with the same name already exists' }; }
@@ -40,7 +40,7 @@ export async function updateGame(gameId, game) {
     catch(error)                                        { throw { status: 400, message: error.message }; }
 
     let gameValidation = GamesValidator.validateGame(game, true);
-    if (!gameValidation.valid)                          { throw {status: 400, message: gameValidation.message};}
+    if (!gameValidation.valid)                          { throw {status: 400, message: 'Invalid game data', errors: gameValidation.errors};}
     
     if (Object.keys(game).length === 0)                 { throw { status: 400, message: 'No fields provided to update' }; }
     
