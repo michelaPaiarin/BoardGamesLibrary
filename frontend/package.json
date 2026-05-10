@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./css/style.css -o ./css/tailwindStyle.css",
     "watch:css": "npx @tailwindcss/cli -i ./css/style.css -o ./css/tailwindStyle.css --watch"

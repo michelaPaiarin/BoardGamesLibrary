@@ -10,12 +10,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const frontendPath = path.join(__dirname, '../frontend');
+const sharedPath = path.join(__dirname, '../shared');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(express.static(frontendPath));
+app.use('/shared', express.static(sharedPath));
 
 export async function start(mode = MODE.DEFAULT) {
   try {
