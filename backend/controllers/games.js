@@ -1,5 +1,5 @@
 import * as GamesModel from '../models/games.js';
-import * as GamesValidator from '../validators/games.js';
+import * as GamesValidator from '../sharedExports.js';
 
 export async function getAllGames(filters) {
     let areEmptyFilters = filters && Object.keys(filters).length === 0;

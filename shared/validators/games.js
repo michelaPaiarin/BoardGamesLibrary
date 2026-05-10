@@ -1,4 +1,4 @@
-import { GAME_CONSTRAINTS } from '../config/gameConstraints.js';
+import { GAME_CONSTRAINTS } from '../../shared/config/gameConstraints.js';
 
 const ERROR_UNKNOWN_FIELDS = new Error("Unknown fields");
 const ERROR_INVALID_DATA_TYPE = new Error("Invalid data type. Only strings, numbers, or null are allowed.");

@@ -1,13 +1,13 @@
 import { getDB } from "../DB/database.js";
-import { GAME_CONSTRAINTS } from "../config/gameConstraints.js";
+import { GAME_CONSTRAINTS } from "../sharedExports.js";
 
 const GameFields = GAME_CONSTRAINTS.Fields;
-const baseSelctQuery = 'SELECT * FROM games';
+const baseSelectQuery = 'SELECT * FROM games';
 
 export async function getAllGames() {
     console.log('Fetching all games');
     try {
-        return await getDB().all(baseSelctQuery);
+        return await getDB().all(baseSelectQuery);
     } catch (error) {
         console.error('Error fetching games:', error);
         throw error;
@@ -17,7 +17,7 @@ export async function getAllGames() {
 export async function getGameById(gameId) {
     console.log(`Fetching game with ID: ${gameId}`);
     try {
-        return await getDB().get(baseSelctQuery + " WHERE ID = ?", [gameId]);
+        return await getDB().get(baseSelectQuery + " WHERE ID = ?", [gameId]);
     } catch (error) {
         console.error('Error fetching game:', error);
         throw error;
@@ -27,7 +27,7 @@ export async function getGameById(gameId) {
 export async function getGameByName(gameName, exactMatch = false) {
     console.log("Fetching game with name:", gameName, "Exact match:", exactMatch);
     try {
-        const query = baseSelctQuery + (exactMatch
+        const query = baseSelectQuery + (exactMatch
             ? " WHERE Name = ?"
             : " WHERE Name LIKE ?");
 
