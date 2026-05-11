@@ -1,5 +1,6 @@
 import { loadAllGameList } from '../main.js';
 import { getGameById } from '../utilities/api.js';
+import { validateGame, cleanGameData, GAME_CONSTRAINTS } from '../sharedExports.js';
 
 const ID = {
     Name: 'name-input',
@@ -12,6 +13,15 @@ const ID = {
     UrlSmallImage: 'small-image-input',
     UrlBigImage: 'big-image-input',
     Description: 'description-input',
+}
+
+const IDMinimalConstraints = {
+    MinPlayers: ['MinPlayer', 'MaxPlayer'],     MinTime: ['Time'],
+    MinPlayerAge: ['MinAge'],                   MinYear: ['Year'],
+}
+
+const IDMaximalConstraints = {
+    MaxYear: ['Year'],
 }
 
 // note: if error occurs the caller handle it
@@ -30,6 +40,25 @@ async function fillGameFormWithGame(game) {
 
         element.value = game[key];
     }
+}
+
+function addSpecificProperties(proprietis, constraintsArray) {
+    for (const key in constraintsArray) {
+        for (const id of constraintsArray[key]) { 
+            const element = document.getElementById(ID[id]);
+            if (element) { element[proprietis] = GAME_CONSTRAINTS[key]; }
+        }
+    }
+}
+
+export async function setConstraintGameForm() {
+    for (const key of GAME_CONSTRAINTS.RequireFields) {
+        const element = document.getElementById(ID[key]);
+        if (element) { element.required = true; }
+    }
+
+    addSpecificProperties('min', IDMinimalConstraints);
+    addSpecificProperties('max', IDMaximalConstraints);
 }
 
 export async function gameSaveForm(event) {

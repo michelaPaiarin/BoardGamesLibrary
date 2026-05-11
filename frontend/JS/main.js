@@ -1,9 +1,9 @@
-import * as Loader                    from "./utilities/loader.js";
-import * as LoaderError               from "./utilities/loaderError.js";
+import * as Loader         from "./utilities/loader.js";
+import * as LoaderError    from "./utilities/loaderError.js";
 
-import { printAllGames              } from "./views/gamesList.js";
-import { fillGameDetails            } from "./views/gameDetail.js";
-import { gameSaveForm, fillGameForm } from "./views/gameForm.js";
+import { printAllGames   } from "./views/gamesList.js";
+import { fillGameDetails } from "./views/gameDetail.js";
+import { gameSaveForm, fillGameForm, setConstraintGameForm } from "./views/gameForm.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Avvio dell'applicazione...");
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 export const loadAddGame = async function() {
     console.log("Hai cliccato su Aggiungi Gioco");
     await Loader.loadMainAddGame();
+    await setConstraintGameForm();
 
     const backBtn = document.getElementById('navigate-back-btn');
     if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
@@ -27,6 +28,7 @@ export const loadModifiedGames = async function(id) {
     
     await Loader.loadMainModifiedGames(); 
     try {
+        await setConstraintGameForm();
         await fillGameForm(id);
     
         const backBtn = document.getElementById('navigate-back-btn');
