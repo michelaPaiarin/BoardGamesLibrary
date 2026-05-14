@@ -4,7 +4,8 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="name-input">Nome del gioco:</label>
-                    <input type="text" id="name-input" name="name" required>
+                    <input type="text" id="name-input" name="Name">
+                    <span class="error-message" id="Name-error"></span>
                 </div>
             </div>
             
@@ -12,56 +13,64 @@
                 <div class="form-group">
                     <label for="game-players-input">Numero di giocatori:</label>
                     <div class="input-group">
-                        <input type="number" id="min-players-input" name="min-players" min="1" placeholder="minimo" required>
+                        <input type="number" id="min-players-input" name="MinPlayer" placeholder="minimo">
                         <span> - </span>
-                        <input type="number" id="max-players-input" name="max-players" min="1" placeholder="massimo" required>
+                        <input type="number" id="max-players-input" name="MaxPlayer" placeholder="massimo">
                     </div>
+                    <span class="error-message" id="Player-error"></span>
                 </div>
                 <div class="form-group">
                     <label for="time-input">Durata (minuti):</label>
-                    <input type="number" id="time-input" name="time" min="1" required>
+                    <input type="number" id="time-input" name="Time">
+                    <span class="error-message" id="Time-error"></span>
                 </div>
                 <div class="form-group">
                     <label for="age-input">Età minima:</label>
-                    <input type="number" id="age-input" name="age" min="1" required>
+                    <input type="number" id="age-input" name="MinAge">
+                    <span class="error-message" id="MinAge-error"></span>
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="year-input">Anno di pubblicazione:</label>
-                    <input type="number" id="year-input" name="year" min="1900" required>
+                    <input type="number" id="year-input" name="Year">
+                    <span class="error-message" id="Year-error"></span>
                 </div>
                 <div class="form-group">
                     <label for="location-input">Posizione:</label>
-                    <input type="text" id="location-input" name="location" placeholder="piano.scaffale.mensola">
+                    <input type="text" id="location-input" name="Location" placeholder="piano.scaffale.mensola">
+                    <span class="error-message" id="Location-error"></span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="small-image-input">Link immagine di copertina</label>
-                    <input type="url" id="small-image-input" name="game-image-small">
+                    <input type="url" id="small-image-input" name="UrlSmallImage">
+                    <span class="error-message" id="UrlSmallImage-error"></span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="big-image-input">Link immagine di dettaglio</label>
-                    <input type="url" id="big-image-input" name="big-image">
+                    <input type="url" id="big-image-input" name="UrlBigImage">
+                    <span class="error-message" id="UrlBigImage-error"></span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="description-input">Descrizione:</label>
-                    <textarea id="description-input" name="description"></textarea>
+                    <textarea id="description-input" name="Description"></textarea>
+                    <span class="error-message" id="Description-error"></span>
                 </div>
             </div>
 
             <div class = "form-button-row">
-                <button id="navigate-back-btn" class="secondaryButton">Annulla</button>
-                <button id="save-game-btn" type="submit" class="primaryButton">Salva</button>
+                <button id="navigate-back-btn"  type="button"   class="secondaryButton">Annulla</button>
+                <button id="save-game-btn"      type="submit"   class="primaryButton">Salva</button>
             </div>
         </form>
     </div>
