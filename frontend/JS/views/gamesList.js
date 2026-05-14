@@ -1,5 +1,5 @@
 import { getAllGames } from "../utilities/api.js";
-import { loadModifiedGames, loadDetailGame } from "../main.js";
+import { loadModifiedGames, loadDetailGame, loadAllGameList } from "../main.js";
 
 const GAME_CARD_PATH = './components/gameCard.html'
 
@@ -57,7 +57,7 @@ export async function printAllGames(filter = {}) {
         
         tempDiv.querySelector('.game-action-btn').onclick = (event) => {
             event.stopPropagation();
-            loadModifiedGames(game.ID);
+            loadModifiedGames(game.ID, loadAllGameList);
         };
 
         tempDiv.firstElementChild.onclick = () => {loadDetailGame(game.ID); };

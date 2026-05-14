@@ -35,7 +35,7 @@ async function fillGameFormWithGame(game) {
     }
 
     document.getElementById("edit-game").onclick = (event) => {
-        loadModifiedGames(game.ID);
+        loadModifiedGames(game.ID, () => loadDetailGame(game.ID));
     };
 
     document.getElementById("delete-game").onclick = (event) => {

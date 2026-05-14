@@ -20,10 +20,10 @@ export const loadAddGame = async function() {
 
     let form = document.getElementById("game-form");
     form.dataset.method = "POST";
-    form.onsubmit = (event) => gameSaveForm(event);
+    form.onsubmit = (event) => gameSaveForm(event, loadAllGameList);
 };
 
-export const loadModifiedGames = async function(id) {
+export const loadModifiedGames = async function(id, previusPage) {
     console.log("Hai cliccato sul gioco con ID = " + id);
     
     await Loader.loadMainModifiedGames(); 
@@ -32,11 +32,12 @@ export const loadModifiedGames = async function(id) {
         await fillGameForm(id);
     
         const backBtn = document.getElementById('navigate-back-btn');
-        if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
+        if (backBtn) { backBtn.addEventListener('click', previusPage); }
     
         let form = document.getElementById("game-form");
         form.dataset.method = "PUT";
-        form.onsubmit = (event) => gameSaveForm(event);
+        form.dataset.gameID = id;
+        form.onsubmit = (event) => gameSaveForm(event, previusPage);
     } catch (error) {
         console.error("Errore durante il caricamento dei dettagli del gioco:", error);
         LoaderError.showErrorGetGame(loadAllGameList);
