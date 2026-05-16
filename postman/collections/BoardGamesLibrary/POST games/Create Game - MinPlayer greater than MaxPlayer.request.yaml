@@ -1,0 +1,39 @@
+$kind: http-request
+name: 'Create Game - MinPlayer > MaxPlayer'
+method: POST
+url: 'http://localhost:3000/games'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Name": "Bad Players Game",
+      "MinPlayer": 6,
+      "MaxPlayer": 2,
+      "MinAge": 8,
+      "Time": 60,
+      "Location": "A.1.2"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 400", function () {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test("Response has field 'details'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('details');
+      });
+
+      pm.test("At least one error has field 'field' equal to 'Player'", function () {
+        const json = pm.response.json();
+        const playerError = json.details.find(function (e) {
+          return e.field === 'Player';
+        });
+        pm.expect(playerError).to.not.be.undefined;
+      });

@@ -1,0 +1,7 @@
+$kind: collection
+name: Board Games Library - /games CRUD
+variables:
+  - key: createdGameId
+    value: ''
+  - key: createdGameId2
+    value: ''

@@ -1,0 +1,38 @@
+$kind: http-request
+method: POST
+url: 'http://localhost:3000/games'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Name": "Bad Location Game",
+      "MinPlayer": 2,
+      "MaxPlayer": 4,
+      "MinAge": 8,
+      "Time": 60,
+      "Location": "invalid-location"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 400", function () {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test("Response has field 'details'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('details');
+      });
+
+      pm.test("At least one error has field 'field' equal to 'Location'", function () {
+        const json = pm.response.json();
+        const locationError = json.details.find(function (e) {
+          return e.field === 'Location';
+        });
+        pm.expect(locationError).to.not.be.undefined;
+      });

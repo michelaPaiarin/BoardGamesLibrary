@@ -1,0 +1,30 @@
+$kind: http-request
+method: POST
+url: 'http://localhost:3000/games'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Name": "Incomplete Game"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 400", function () {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test("Response has field 'details'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('details');
+      });
+
+      pm.test("details array is not empty", function () {
+        const json = pm.response.json();
+        pm.expect(json.details).to.be.an('array').that.is.not.empty;
+      });

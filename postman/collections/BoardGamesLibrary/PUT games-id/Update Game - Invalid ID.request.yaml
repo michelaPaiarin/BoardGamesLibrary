@@ -1,0 +1,25 @@
+$kind: http-request
+method: PUT
+url: 'http://localhost:3000/games/abc'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Time": 45
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 400", function () {
+        pm.response.to.have.status(400);
+      });
+
+      pm.test("Response has field 'message'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('message');
+      });

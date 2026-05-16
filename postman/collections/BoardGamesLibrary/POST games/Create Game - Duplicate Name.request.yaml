@@ -1,0 +1,30 @@
+$kind: http-request
+method: POST
+url: 'http://localhost:3000/games'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Name": "Test Game Postman",
+      "MinPlayer": 2,
+      "MaxPlayer": 4,
+      "MinAge": 8,
+      "Time": 60,
+      "Location": "A.1.1"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 409", function () {
+        pm.response.to.have.status(409);
+      });
+
+      pm.test("Response has field 'message'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('message');
+      });

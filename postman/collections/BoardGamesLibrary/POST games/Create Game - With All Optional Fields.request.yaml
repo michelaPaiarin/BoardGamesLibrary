@@ -1,0 +1,39 @@
+$kind: http-request
+method: POST
+url: 'http://localhost:3000/games'
+order: 7000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Name": "Full Game Postman",
+      "MinPlayer": 2,
+      "MaxPlayer": 6,
+      "MinAge": 10,
+      "Time": 90,
+      "Location": "B.2.3",
+      "Description": "A complete test game",
+      "UrlBigImage": "https://example.com/big.jpg",
+      "UrlSmallImage": "https://example.com/small.jpg",
+      "Year": 2020
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 201", function () {
+        pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has field 'gameId'", function () {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property('gameId');
+      });
+
+      pm.test("Save createdGameId2", function () {
+        const json = pm.response.json();
+        pm.collectionVariables.set('createdGameId2', json.gameId);
+      });
