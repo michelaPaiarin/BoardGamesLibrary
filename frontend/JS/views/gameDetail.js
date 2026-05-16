@@ -1,5 +1,5 @@
-import { loadModifiedGames, loadDetailGame } from "../main.js";
-import { getGameById } from '../utilities/api.js';
+import { loadModifiedGames, loadDetailGame, loadAllGameList } from "../main.js";
+import { getGameById, deleteGame } from '../utilities/api.js';
 
 const ID = {
     Name: 'game-name',
@@ -38,7 +38,19 @@ async function fillGameFormWithGame(game) {
         loadModifiedGames(game.ID, () => loadDetailGame(game.ID));
     };
 
-    document.getElementById("delete-game").onclick = (event) => {
+    document.getElementById("delete-game").onclick = async (event) => {
         console.log("Cancellazione gioco:", game.ID);
+        if(confirm("Sei sicuro di voler eliminare il gioco?")){
+            try{
+                await deleteGame(game.ID);
+                alert("Operazione completata con successo! Puoi tornare alla pagina precedente.");
+                await loadAllGameList();
+            }catch(e){
+                console.error("Errore durante la cancellazione del gioco:", e);
+                alert("Errore durante la cancellazione del gioco: " + e.message);
+            }
+        }else{
+            console.log("Cancellazione annullata da parte dell'utente");
+        }
     };
 }
