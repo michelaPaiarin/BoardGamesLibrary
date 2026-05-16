@@ -2,6 +2,8 @@ export const GAME_CONSTRAINTS = {
     Fields: ["Name", "MinPlayer", "MaxPlayer", "MinAge", "Time", "Location", "Description", "UrlBigImage", "UrlSmallImage", "Year"],
     RequireFields: ["Name", "MinPlayer", "MaxPlayer", "Time", "Location", "MinAge"],
     OptionalFields: ["Description", "UrlBigImage", "UrlSmallImage", "Year"],
+    NumericFields: ["MinPlayer", "MaxPlayer", "MinAge", "Time", "Year"],
+    TextFields: ["Name", "Location", "Description", "UrlBigImage", "UrlSmallImage"],
     MinimalConstraints: ["MinPlayers", "MinTime", "MinPlayerAge", "MinYear"],
     MaximalConstraints: ["MaxYear"],
     MinPlayers: 1,
@@ -12,3 +14,15 @@ export const GAME_CONSTRAINTS = {
     LocationRegex: /^[A-Z]\.\d+\.\d+$/,
     ImageAcceptedProtocols: ['http:', 'https:']
 };
+
+export const GAME_FILTER_CONSTRAINTS = {
+    FilterableFields:   [...GAME_CONSTRAINTS.RequireFields, 'Player', 'Age', 'Room', 'Bookcase', 'Shelf'],
+    NumericFields:      [...GAME_CONSTRAINTS.NumericFields, 'Player', 'Bookcase', 'Shelf', 'Age'],
+    TextFields:         [...GAME_CONSTRAINTS.TextFields, 'Room'],
+    NumericalSuffix: { 'eq': '=', 'ge': '>=', 'le': '<=', 'gt': '>', 'lt': '<' },
+    TextSuffix: { 'e': '=', 'c': 'LIKE' },
+    ExclusiveNumberSuffixGroups: [['ge', 'gt'], ['le', 'lt']],
+
+    SuffixSeparator: '_',
+    ValidRoom: /^[A-Z]?$/
+}
