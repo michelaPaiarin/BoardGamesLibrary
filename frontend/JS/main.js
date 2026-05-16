@@ -23,21 +23,30 @@ export const loadAddGame = async function() {
     form.onsubmit = (event) => gameSaveForm(event, loadAllGameList);
 };
 
+function getFormStateString(form){
+    return new URLSearchParams(new FormData(form)).toString()
+}
+
 export const loadModifiedGames = async function(id, previusPage) {
     console.log("Hai cliccato sul gioco con ID = " + id);
     
     await Loader.loadMainModifiedGames(); 
     try {
-        await setConstraintGameForm();
-        await fillGameForm(id);
-    
-        const backBtn = document.getElementById('navigate-back-btn');
-        if (backBtn) { backBtn.addEventListener('click', previusPage); }
-    
+        await setConstraintGameForm(), await fillGameForm(id);
+
         let form = document.getElementById("game-form");
         form.dataset.method = "PUT";
         form.dataset.gameID = id;
+        form.dataset.initialState = getFormStateString(form);
         form.onsubmit = (event) => gameSaveForm(event, previusPage);
+        
+        const backBtn = document.getElementById('navigate-back-btn');
+        backBtn.addEventListener('click', () => {
+            const currentState = getFormStateString(form);
+            if(currentState !== form.dataset.initialState){
+                if(confirm("Se torni indietro le modifiche andranno perse. Sei sicuro?")){ previusPage(); }
+            }else{ previusPage(); }
+        });
     } catch (error) {
         console.error("Errore durante il caricamento dei dettagli del gioco:", error);
         LoaderError.showErrorGetGame(loadAllGameList);

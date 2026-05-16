@@ -41,6 +41,7 @@ async function fillGameFormWithGame(game) {
 
         element.value = game[key];
     }
+
 }
 
 function addSpecificProperties(proprietis, constraintsArray) {
@@ -117,7 +118,6 @@ export async function gameSaveForm(event, previusPage) {
         return;
     }
 
-    
     console.log("Dati puliti del form:", gameData);
 
     let validation;
