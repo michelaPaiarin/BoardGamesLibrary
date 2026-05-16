@@ -1,0 +1,26 @@
+$kind: http-request
+method: PUT
+url: 'http://localhost:3000/games/{{createdGameId}}'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "Time": 90,
+      "Description": "Updated by Postman test"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has field 'status' equal to 'success'", function () {
+        const json = pm.response.json();
+        pm.expect(json.status).to.eql('success');
+      });
