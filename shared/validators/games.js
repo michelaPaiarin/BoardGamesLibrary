@@ -1,74 +1,33 @@
 import { GAME_CONSTRAINTS } from '../config/gameConstraints.js';
-
-const ERROR_UNKNOWN_FIELDS = new Error("Unknown fields");
-const ERROR_INVALID_DATA_TYPE = new Error("Invalid data type. Only strings, numbers, or null are allowed.");
+import * as Validator from './common.js';
+import * as Error from "./errors.js";
 
 const validators = {
-    'ID': validateID,                   'Name': validateName,
-    'UrlBigImage': validateImageUrl,    'UrlSmallImage': validateImageUrl,
-    'MinPlayer': validatePlayer,        'MaxPlayer': validatePlayer,
+    'ID': validateID,                   'Name': validateName,     
     'MinAge': validatePlayerAge,        'Time': validateTime,
     'Location': validateLocation,       'Description': validateDescription,
+    'MinPlayer': (value) => validatePlayer(value, 'MinPlayer'),
+    'MaxPlayer': (value) => validatePlayer(value, 'MaxPlayer'),
+    'UrlBigImage': (value) => validateImageUrl(value, 'UrlBigImage'),
+    'UrlSmallImage': (value) => validateImageUrl(value, 'UrlSmallImage'),   
     'Year': validateYear
 }
 
 export function fieldsValidator(field){
     const validator = validators[field];
     if (validator) { return validator; }
-    else { throw ERROR_UNKNOWN_FIELDS; }
+    else { throw Error.ERROR_UNKNOWN_FIELDS; }
 }
-
-function isNumber(str) { return !isNaN(Number(str)); }
 
 export function cleanGameData(game){
-    let newGame = {}
-    for(const [field, value] of Object.entries(game)){
-        if (!GAME_CONSTRAINTS.Fields.includes(field)) { continue; }
-
-        if(typeof value === 'string'){
-            const trimmedString = value.trim();
-            newGame[field] = (trimmedString === '')
-                                ? null
-                                : isNumber(trimmedString)
-                                    ? Number(trimmedString)
-                                    : trimmedString;
-        }else if(typeof value === 'number' || value === null){
-            newGame[field] = value;
-        }else{
-            throw ERROR_INVALID_DATA_TYPE;
-        }
-    }
-    return newGame;
-}
-
-function checkValueRequire(fieldName, value){
-    return (value === null) 
-            ? { valid: false, message: `Field '${fieldName}' can't be null.` }
-            : { valid: true};
+    return Validator.cleanData(game, GAME_CONSTRAINTS.Fields);
 }
 
 export function checkRequireFields(game, isUpdate){
-    let validationResult = { valid: false, errors: [] };
-
-    for (const field of GAME_CONSTRAINTS.RequireFields) {
-        const value = game[field];
-        if(value === undefined && !isUpdate){
-            validationResult.errors.push({
-                field: field,
-                message: `Field '${field}' is required.`
-            });
-        }else {
-            const check = checkValueRequire(field, game[field]);
-            if (!check.valid){ 
-                validationResult.errors.push({ field: field, message: check.message });
-            }
-        }
-    }
-
-    if (validationResult.errors.length === 0) { validationResult.valid = true; }
-    return validationResult;
+    return Validator.checkRequireFields(game, (!isUpdate)
+            ? GAME_CONSTRAINTS.RequireFields
+            : Validator.arrayIntersection(GAME_CONSTRAINTS.RequireFields, Object.keys(game)));
 }
-
 
 export function validateID(id) {
     if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
@@ -88,10 +47,12 @@ export function validateGame(game, isUpdate = false) {
     let validationResult = validateObjectGame(game);
     if (!validationResult.valid) { return validationResult; }
     
-    let validationReturn = { valid: false, errors: [] };
-
-    validationResult = checkRequireFields(game, isUpdate);       
-    if (!validationResult.valid) { validationReturn.errors = validationReturn.errors.concat(validationResult.errors);}
+    let errors = checkRequireFields(game, isUpdate).errors;
+    
+    validationResult = Validator.checkFieldsType(game, 'string', GAME_CONSTRAINTS.TextFields);
+    if(!validationResult.valid){ errors = errors.concat(validationResult.errors);}
+    validationResult = Validator.checkFieldsType(game, 'number', GAME_CONSTRAINTS.NumericFields);
+    if(!validationResult.valid){ errors = errors.concat(validationResult.errors);}
 
     // Validate fields value if present, ignore unknown fields and skip validation for undefined or null optional fields
     for (const [field, value] of Object.entries(game)) {
@@ -100,78 +61,31 @@ export function validateGame(game, isUpdate = false) {
             if (game[field] === undefined || game[field] === null)  { continue; }   // Skip validation for undefined or null optional fields
 
             validationResult = fieldsValidator(field)(value);
-            if (!validationResult.valid) { validationReturn.errors.push(
-                { field: field, message: validationResult.message });
+            if (!validationResult.valid) { 
+                if (validationResult.errors) { errors = errors.concat(validationResult.errors); }
+                else                         { errors.push({ field: field, message: validationResult.message }); }
             }
         }
     }
     
     if (game.MinPlayer !== undefined && game.MaxPlayer !== undefined) {
         let playerValidation =  validatePlayerCount(game.MinPlayer, game.MaxPlayer);  
-        if (!playerValidation.valid) { validationReturn.errors.push( { field: 'Player', message: playerValidation.message });}
+        if (!playerValidation.valid) { errors.push( { field: 'Player', message: playerValidation.message });}
     }
 
-    if (validationReturn.errors.length == 0) {validationReturn.valid = true; }
-    return validationReturn;
+    return Validator.createValidateResult(errors);
 }
 
-function validateName(name) {
-    return (typeof name !== 'string')
-            ? { valid: false, message: 'Invalid game name. Name must be a string.' }
-            : { valid: true };
-}
+function validateDescription(description)   { return Validator.validateText(description, 'Description'); }
+function validateName(name)                 { return Validator.validateText(name, 'Name', false);        }
 
-function validateImageUrl(imageUrl){
-    if (typeof imageUrl !== 'string') { return { valid: false, message: 'Invalid image URL. Image URL must be a string.' }; }
+function validateImageUrl(imageUrl, field) { return Validator.validateUrl(imageUrl, field, GAME_CONSTRAINTS.ImageAcceptedProtocols);                    }
+function validateLocation(location)        { return Validator.validateRegex(location, 'Location', GAME_CONSTRAINTS.LocationRegex);                      }
 
-    try {
-        if (GAME_CONSTRAINTS.ImageAcceptedProtocols.indexOf((new URL(imageUrl)).protocol) === -1) {
-            return { valid: false, message: 'Invalid image URL. Image URL must start with ' + GAME_CONSTRAINTS.ImageAcceptedProtocols.join(' or ') };
-        }
-    } catch (error) { return { valid: false, message: 'Invalid image URL. Image URL must be a valid URL.' }; }
-    
-    return { valid: true };
-}
-
-function validatePlayer(player){
-    if (isNaN(player)){                                         return { valid: false, message: 'Invalid player count. Player count must be a number.' };}
-    else if(parseInt(player) < GAME_CONSTRAINTS.MinPlayers) {   return { valid: false, message: 'Invalid player count. Player count must be greater than or equal to ' + GAME_CONSTRAINTS.MinPlayers };}
-    return { valid: true };
-}
-
-function validatePlayerAge(age){
-    if(isNaN(age)){                                             return { valid: false, message: 'Invalid min age. Age must be a number.' };}
-    else if(parseInt(age) < GAME_CONSTRAINTS.MinPlayerAge){     return { valid: false, message: 'Invalid min age. Min age must be greater than or equal to ' + GAME_CONSTRAINTS.MinPlayerAge };}
-    return { valid: true }
-}
-
-function validateTime(time){
-    if (isNaN(time)){                                           return { valid: false, message: 'Invalid time. Time must be a number.' };}
-    else if(parseInt(time) < GAME_CONSTRAINTS.MinTime) {        return { valid: false, message: 'Invalid time. Time must be greater than or equal to ' + GAME_CONSTRAINTS.MinTime };}
-    return { valid: true };
-}
-
-function validateLocation(location){
-    if (typeof location !== 'string') {                         return { valid: false, message: 'Invalid location. Location must be a string.' };}
-    else if (!GAME_CONSTRAINTS.LocationRegex.test(location)) {  return { valid: false, message: 'Invalid location. Location must match the required format.' };}
-    return { valid: true };
-}
-
-function validateDescription(description){
-    return (typeof description !== 'string')
-            ? { valid: false, message: 'Invalid description. Description must be a string.' }
-            : { valid: true };
-}
-
-function validateYear(year){
-    if (isNaN(year)){
-       return { valid: false, message: 'Invalid year. Year must be a number.' };
-    }else if(parseInt(year) < GAME_CONSTRAINTS.MinYear || parseInt(year) > GAME_CONSTRAINTS.MaxYear) {
-        return { valid: false, message: `Invalid year. Year must be between ${GAME_CONSTRAINTS.MinYear} and ${GAME_CONSTRAINTS.MaxYear}.` };
-    }
-
-    return { valid: true };
-}
+function validatePlayer(player, field)     { return Validator.validateNumberRange(player,  field,  GAME_CONSTRAINTS.MinPlayers);                        }
+function validatePlayerAge(age)            { return Validator.validateNumberRange(age,     'Age',  GAME_CONSTRAINTS.MinPlayerAge);                      }
+function validateTime(time)                { return Validator.validateNumberRange(time,    'Time', GAME_CONSTRAINTS.MinTime);                           }
+function validateYear(year)                { return Validator.validateNumberRange(year,    'Year', GAME_CONSTRAINTS.MinYear, GAME_CONSTRAINTS.MaxYear); }
 
 function validatePlayerCount(minPlayers, maxPlayers) {
     return (minPlayers > maxPlayers)
