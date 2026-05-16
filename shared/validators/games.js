@@ -18,6 +18,8 @@ export function fieldsValidator(field){
     else { throw ERROR_UNKNOWN_FIELDS; }
 }
 
+function isNumber(str) { return !isNaN(Number(str)); }
+
 export function cleanGameData(game){
     let newGame = {}
     for(const [field, value] of Object.entries(game)){
@@ -25,7 +27,11 @@ export function cleanGameData(game){
 
         if(typeof value === 'string'){
             const trimmedString = value.trim();
-            newGame[field] = (trimmedString === '') ? null : trimmedString;
+            newGame[field] = (trimmedString === '')
+                                ? null
+                                : isNumber(trimmedString)
+                                    ? Number(trimmedString)
+                                    : trimmedString;
         }else if(typeof value === 'number' || value === null){
             newGame[field] = value;
         }else{

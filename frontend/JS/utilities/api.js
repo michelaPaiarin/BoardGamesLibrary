@@ -1,9 +1,25 @@
+export class ApiError extends Error {
+    constructor(message, details = []) {
+        super(message);
+        this.name = "ApiError";
+        this.details = details;
+    }
+}
+
 async function runRoute(route, options = {}) {
     try {
         const response = await fetch(route, options);
-        if (!response.ok) throw new Error(`Errore nella richiesta a ${route}: ${response.statusText}`);
 
-        return response.json();
+        if (!response.ok){
+            let errorData;
+
+            try      { errorData = await response.json();                           }
+            catch(e) { errorData = { message: response.statusText, details: [] };   }
+
+            throw new ApiError(errorData.message || `Errore HTTP ${response.status}`, errorData.details || []);
+        } 
+
+        return await response.json();
     }catch (error){
         console.error(`Errore durante la fetch verso ${route}:`, error);
         throw error;
