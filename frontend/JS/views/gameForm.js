@@ -136,13 +136,17 @@ export async function gameSaveForm(event, previusPage) {
 }
 
 async function saveChange(game, method, previusPage, id = null) {
-    console.log('salvo gioco id: ', id);
+    console.log((method == 'PUT') ? `Salvo gioco id: ${id}` : `Salvo nuovo gioco`);
+    
     try {
+        let response;
         switch (method) {
-            case 'POST' : await postGame(game); break;
-            case 'PUT'  : await putGame(id, game); break;
+            case 'POST' : response = await postGame(game);      break;
+            case 'PUT'  : response = await putGame(id, game);   break;
             default     : throw new Error("Metodo non supportato");
         }
+        
+        if(method == 'POST'){ console.log(`Id nuovo gioco: ${response.gameId}`); }
 
         alert("Operazione completata con successo! Puoi tornare alla pagina precedente.");
         previusPage();
