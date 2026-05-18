@@ -1,5 +1,6 @@
 const NAVBAR_PATH = './components/navbar.html';
 const FOOTER_PATH = './components/footer.html';
+const POPUP_PATH = './components/popup.html';
 
 const MAIN_ALL_GAMES_PATH = './views/mainAllGames.html';
 const MAIN_FORM_GAMES_PATH = './views/mainFormGame.html';
@@ -12,11 +13,11 @@ const MAIN_DETAIL_GAME_TITLE = `Dettagli gioco: `;
 
 const MAIN_TITLE_ID = 'content-title';
 
-const load = [{'path': NAVBAR_PATH, 'placeholderId': 'navbar-placeholder'},
-              {'path': FOOTER_PATH, 'placeholderId': 'footer-placeholder'},
-              {'path': MAIN_ALL_GAMES_PATH, 'placeholderId': 'main-placeholder'}];
+const loadOnce = [{'path': NAVBAR_PATH, 'placeholderId': 'navbar-placeholder'},
+                  {'path': FOOTER_PATH, 'placeholderId': 'footer-placeholder'},
+                  {'path': POPUP_PATH, 'placeholderId': 'popup_placeholder'}];
 
-export async function loadComponents() { for (const item of load) { await loadComponent(item.path, item.placeholderId); }}
+export async function init() { for (const item of loadOnce) { await loadComponent(item.path, item.placeholderId); }}
 
 export async function loadComponent(path, placeholderId) {
     try {

@@ -22,7 +22,6 @@ const footerPrefix = 'popup-footer-';
 let previousFocus = null;
 
 export function init(){
-    let previousFocus = null;
     document.querySelectorAll('dialog.popup').forEach(dialog => {
         dialog.addEventListener('close', () => {
             previousFocus?.focus()
@@ -34,15 +33,15 @@ function clearPopUp(){
 
 }
 
-export function opePopUp(Type, popUpData){
+export function openPopUp(Type, popUpData){
     const dialog = document.getElementById('popup');
-    const config = POPUP_CONFIG[TYPE[Type]];
+    const config = POPUP_CONFIG[Type];
     dialog.querySelector('.popup-title').textContent = data.title;
     dialog.querySelector('.popup-text').textContent  = data.message;
 
     dialog.classList.add(config.class);
 
-    dialog.querySelector(footerPrefix + config.footer).removeAttribute('hidden');
+    dialog.querySelector(footerPrefix + config.footer).remove('hidden');
 
     if(config.footer == 'single'){
         dialog.querySelector(BUTTON_ID.Ok).addEventListener('click', data.onOk);
