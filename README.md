@@ -132,11 +132,18 @@ Risposta `200 OK`:
 ]
 ```
 
-Con filtri:
+#### Con filtri:
+
+Esempi:
 
 ```
+GET /games?Name_c=catan
+GET /games?Time_lt=100&Player_ge=3
+GET /games?Room_e=A&Year_gt=2000
 GET /games?Name_c=catan&Time_lt=100&Player_ge=3
 ```
+
+Risposta `200 OK`: array di oggetti gioco (vedi struttura in GET /games).
 
 ### GET /games/:id
 
