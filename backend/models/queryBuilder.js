@@ -8,7 +8,6 @@ export function buildWhereClause(filter){
     if (!filter || Object.keys(filter).length === 0) { return { sqlClause: "", params: [] }; }      //Let's skip the empty case. This should never happen.
     
     Object.entries(filter).forEach(([key, value]) => {
-        console.log(key, value);
         const [field, suffix] = key.split(GFC.SuffixSeparator);
         const operator = SUFFIX_TRANSLATOR[suffix];
         try{
@@ -22,8 +21,6 @@ export function buildWhereClause(filter){
     });
 
     const sqlClause = " WHERE " + clauseCondition.join(" AND ");
-    console.log(sqlClause);
-    console.log(params);
     return {sqlClause, params};    
 }
 
@@ -41,7 +38,6 @@ function getAbstractFiltersQuery(field, suffix, operator, value){
         case 'Room':                    condition = `Location LIKE ?`;                     params.push(`${value}.%`);  break;
         default:                        throw new Error("Unknown field ");
     }
-
-    console.log('Abstract: ', condition, ' ', params)
+    
     return [condition, params];
 }

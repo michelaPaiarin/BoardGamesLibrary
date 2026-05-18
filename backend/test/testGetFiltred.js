@@ -1,4 +1,24 @@
-
+/**
+ * Questa suite esegue un collaudo end-to-end del motore di ricerca del backend,
+ * verificando l'integrità del Query Builder dinamico, dei filtri virtuali
+ * e del sistema di validazione isomorfa.
+ * 
+ * Copertura Test (81 Test Cases superati):
+ * 1. SETUP & TEARDOWN: Inserimento e pulizia automatica (Safe-mode) dei dati di mock.
+ * 2. ROTTE BASE: Gestione 'GET /games' e 'GET /games/:id' (inclusi ID non validi/inesistenti).
+ * 3. FILTRI TESTUALI: Ricerche esatte (_e) e parziali (_c) su Name e Location.
+ * 4. FILTRI NUMERICI: Uguaglianze ed estrazione per range (<, >, <=, >=) su Time, Age, Year.
+ * 5. CAMPI VIRTUALI: Astrazione logica della UX tradotta in SQL dinamico: 'Player', 'Room', 'Age'
+ * 6. FILTRI MISTI: Combinazione simultanea di testo, numeri e campi virtuali.
+ * 7. PROTEZIONE E SICUREZZA (Errori 400): Intercettazione di tipi errati e blocco di operatori in conflitto
+ * 8. EDGE CASES: Gestione di parametri sconosciuti (ignorati in sicurezza) e campi vuoti.
+ * 
+ * Nota:
+ * Questo specifico file di test è stato generato e strutturato dall'Intelligenza Artificiale.
+ * Trattandosi di uno script di collaudo ad uso  interno e non facente parte della logica di business
+ * o dell'architettura del progetto, l'AI è stata impiegata per automatizzare e velocizzare 
+ * la stesura degli 81 casi di test e la formattazione dell'output.
+ */
 
 import { start, MODE } from '../server.js'; 
 
