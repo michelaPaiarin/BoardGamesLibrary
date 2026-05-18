@@ -1,12 +1,16 @@
 import * as GamesModel from '../models/games.js';
-import * as GamesValidator from '../sharedExports.js';
+import { GamesValidator, FilterValidator } from '../sharedExports.js';
 
 export async function getAllGames(filters) {
-    let areEmptyFilters = filters && Object.keys(filters).length === 0;
+    if(!filters || Object.keys(filters).length === 0){return await GamesModel.getAllGames()}
     
-    try             { return areEmptyFilters
-                        ? await GamesModel.getAllGames()
-                        : await GamesModel.getGameFiltered(filters); }
+    try                     { filters = FilterValidator.cleanFilter(filters);}
+    catch(error)            { throw { status: 400, message: error.message }; }
+    
+    let validation = FilterValidator.validateFilter(filters);
+    if (!validation.valid)  { throw { status: 400, message: 'Invalid filter', errors: validation.errors}; }
+
+    try             { return await GamesModel.getGameFiltered(filters); }
     catch (error)   { throw error; }
 }
 

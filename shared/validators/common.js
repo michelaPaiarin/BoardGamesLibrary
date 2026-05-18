@@ -2,7 +2,7 @@ import * as Error from "./errors.js"
 
 function isNumber(str) { return !isNaN(Number(str)); }
 
-export function cleanData(data, AcceptedFields){
+export function cleanData(data, AcceptedFields, isEmptyStringOk = false){
     let cleanedData = {}
     for(const [field, value] of Object.entries(data)){
         if (!AcceptedFields.includes(field)) { continue; }
@@ -10,7 +10,7 @@ export function cleanData(data, AcceptedFields){
         if(typeof value === 'string'){
             const trimmedString = value.trim();
             cleanedData[field] = (trimmedString === '')
-                                ? null
+                                ? (isEmptyStringOk ? '' : null)
                                 : isNumber(trimmedString)
                                     ? Number(trimmedString)
                                     : trimmedString;

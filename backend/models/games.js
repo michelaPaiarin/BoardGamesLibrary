@@ -1,17 +1,29 @@
 import { getDB } from "../DB/database.js";
 import { GAME_CONSTRAINTS } from "../sharedExports.js";
+import { buildWhereClause } from "./queryBuilder.js";
 
 const GameFields = GAME_CONSTRAINTS.Fields;
-const baseSelectQuery = 'SELECT * FROM games';
+const baseSelect = 'SELECT *';
+const baseFrom = 'FROM games';
+const baseSelectQuery = baseSelect + ' ' + baseFrom;
 
-export async function getAllGames() {
-    console.log('Fetching all games');
+async function getGames(select, from, where = '', valueArray = null){
     try {
-        return await getDB().all(baseSelectQuery);
+        const query = `${select} ${from} ${where}`.trim();
+        if (valueArray === null){
+            return await getDB().all(query);
+        }else{
+            return await getDB().all(query, valueArray);
+        }
     } catch (error) {
         console.error('Error fetching games:', error);
         throw error;
     }
+}
+
+export async function getAllGames() {
+    console.log('Fetching all games');
+    return await getGames(baseSelect, baseFrom);
 }
 
 export async function getGameById(gameId) {
@@ -26,27 +38,17 @@ export async function getGameById(gameId) {
 
 export async function getGameByName(gameName, exactMatch = false) {
     console.log("Fetching game with name:", gameName, "Exact match:", exactMatch);
-    try {
-        const query = baseSelectQuery + (exactMatch
-            ? " WHERE Name = ?"
-            : " WHERE Name LIKE ?");
-
-        return await getDB().all(query, [exactMatch ? gameName : `%${gameName}%`]);
-    } catch (error) {
-        console.error('Error fetching game by name:', gameName);
-        throw error;
-    }
+    return await getGames(baseSelect, baseFrom,
+            (exactMatch ? " WHERE Name = ?" : " WHERE Name LIKE ?"),
+            [exactMatch ? gameName : `%${gameName}%`]
+        );
 }
 
 export async function getGameFiltered(filters) {
     console.log('Fetching games with filters:', filters);
-    try {
-        console.log('thinking about how to build the query');
-        return ('thinking about how to build the query for now no filtering!');
-    } catch (error) {
-        console.error('Error fetching filtered games:', error);
-        throw error;
-    }
+    const { sqlClause, params } = buildWhereClause(filters);
+
+    return await getGames(baseSelect, baseFrom, sqlClause, params);
 }
 
 export async function addGame(game) {

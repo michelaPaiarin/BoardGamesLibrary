@@ -16,13 +16,16 @@ export const GAME_CONSTRAINTS = {
 };
 
 export const GAME_FILTER_CONSTRAINTS = {
-    FilterableFields:   [...GAME_CONSTRAINTS.RequireFields, 'Player', 'Age', 'Room', 'Bookcase', 'Shelf'],
-    NumericFields:      [...GAME_CONSTRAINTS.NumericFields, 'Player', 'Bookcase', 'Shelf', 'Age'],
+    FilterableFields:   [...GAME_CONSTRAINTS.RequireFields, 'Year', 'Player', 'Age', 'Room'],
+    NumericFields:      [...GAME_CONSTRAINTS.NumericFields, 'Player', 'Age'],
     TextFields:         [...GAME_CONSTRAINTS.TextFields, 'Room'],
-    NumericalSuffix: { 'eq': '=', 'ge': '>=', 'le': '<=', 'gt': '>', 'lt': '<' },
-    TextSuffix: { 'e': '=', 'c': 'LIKE' },
+    AbstractFilters:    ['Player', 'Age', 'Room'],
+    NumericalSuffix:    { 'eq': '=', 'ge': '>=', 'le': '<=', 'gt': '>', 'lt': '<' },
+    TextSuffix:         { 'e': '=', 'c': 'LIKE' },
     ExclusiveNumberSuffixGroups: [['ge', 'gt'], ['le', 'lt']],
 
     SuffixSeparator: '_',
-    ValidRoom: /^[A-Z]?$/
+    ValidRoom: /^[A-Z]?$/,
+    LocationRegex: GAME_CONSTRAINTS.LocationRegex,
+    LocationContainsRegex: /^[A-Z](\.\d+(\.\d+)?)?$/
 }

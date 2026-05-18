@@ -1,4 +1,4 @@
-import { GAME_FILTER_CONSTRAINTS, GAME_FILTER_CONSTRAINTS as GFC} from "../config/gameConstraints.js";
+import {GAME_CONSTRAINTS as GC, GAME_FILTER_CONSTRAINTS as GFC} from "../config/gameConstraints.js";
 import * as Validator from './common.js';
 import * as Error from './errors.js';
 
@@ -19,7 +19,7 @@ function fieldsValidator(field){
 }
 
 export function cleanFilter(filters){
-    return Validator.cleanData(filters, ALLOWED_FILTERS_COMBINATIONS);
+    return Validator.cleanData(filters, ALLOWED_FILTERS_COMBINATIONS, true);
 }
 
 function checkFiltersType(filters){
@@ -36,7 +36,7 @@ function checkFiltersType(filters){
 export function validateFilter(filters){
     let errors = checkFiltersType(filters);
 
-    for(const field of GAME_FILTER_CONSTRAINTS.FilterableFields){
+    for(const field of GFC.FilterableFields){
         const fieldFiltersEntries = Object.entries(filters).filter(([key, value]) => key.startsWith(`${field}${GFC.SuffixSeparator}`));
         if(fieldFiltersEntries.length == 0){ continue; }
         
@@ -49,7 +49,15 @@ export function validateFilter(filters){
 
 // filters = [['Name_c', 'Catan']]
 function validateText(filters, fieldName){
-    if(filters.length !== 1){ return Validator.createValidateResult([{ field: fieldName, message: `Only one text filter criteria for ${fieldName} is allowed.`}]);}
+    if(filters.length !== 1)     {  return Validator.createValidateResult([{ field: fieldName, message: `Only one text filter criteria for ${fieldName} is allowed.`}]);}
+    
+    if(fieldName === 'Room')     {  return Validator.validateRegex(filters[0][1], 'Room', GFC.ValidRoom); }
+    if(fieldName === 'Location') {
+        const suffix = filters[0][0].split(GFC.SuffixSeparator)[1];
+        const regex = (suffix === 'e') ? GFC.LocationRegex : GFC.LocationContainsRegex;
+        return Validator.validateRegex(filters[0][1], 'Location', regex);
+    }
+    
     return  Validator.validateText(filters[0][1], fieldName, false);
 }
 

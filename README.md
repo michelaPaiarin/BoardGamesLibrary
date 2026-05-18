@@ -25,53 +25,71 @@ Il progetto si divide in 3 macro cartelle:
 ```
 BoardGamesLibrary/
 ├── backend/
-│   ├── controllers/    # Logica di gestione delle richieste
-│   ├── DB/             # Database SQLite, script DDL e dati di esempio
-│   ├── models/         # Interfaccia con il database (query CRUD)
-│   ├── routes/         # Definizione delle rotte Express
-│   ├── test/           # Test degli endpoint
-│   └── server.js       # Entry point del server
+│   ├── controllers/        # Logica di gestione delle richieste
+│   ├── DB/                 # Database SQLite, script DDL e dati di esempio
+│   ├── models/
+│   │   ├── games.js        # Query CRUD verso il database
+│   │   └── queryBuilder.js # Costruzione dinamica delle WHERE clause
+│   ├── routes/             # Definizione delle rotte Express
+│   ├── test/               # Test di endpoint, modelli, validatori e filtri
+│   ├── sharedExports.js    # Re-export centralizzato dei moduli condivisi
+│   └── server.js           # Entry point del server
 ├── frontend/
-│   ├── components/     # Componenti HTML riutilizzabili (es. navbar)
-│   ├── css/            # Fogli di stile (base, input, Tailwind)
-│   ├── JS/             # Logica client-side (api.js, pagine)
-│   ├── img/            # Risorse grafiche
-│   ├── views/          # Viste e template delle pagine
-│   └── index.html      # Pagina principale
-├── shared/             # Codice isomorfo condiviso tra Backend e Frontend
-│   ├── config/         # Vincoli e costanti di validazione 
-│   └── validators/     # Validazione dei dati in ingresso
-└── docs/               # Relazione PDF e materiali aggiuntivi
+│   ├── components/         # Componenti HTML riutilizzabili (es. navbar)
+│   ├── css/                # Fogli di stile (base, input Tailwind)
+│   ├── JS/                 # Logica client-side (api.js, pagine)
+│   ├── img/                # Risorse grafiche
+│   ├── views/              # Pagine dell'applicazione
+│   └── index.html          # Pagina principale
+├── shared/
+│   ├── config/
+│   │   └── gameConstraints.js  # Vincoli e costanti di validazione
+│   └── validators/
+│       ├── common.js       # Validatori generici riutilizzabili
+│       ├── errors.js       # Errori standard condivisi
+│       ├── gameFilter.js   # Validazione dei filtri di ricerca
+│       └── games.js        # Validazione dei dati di gioco
+├── postman/                # Collezione Postman per il test delle API
+└── docs/                   # Relazione PDF e materiali aggiuntivi
 ```
 
 ## API Routes
 Le rotte impementate dal server sono le seguenti:
 
-| Metodo | Percorso           | Descrizione                  |
-|--------|--------------------|------------------------------|
-| GET    | /games             | Lista tutti i giochi (supporta filtri di ricerca)       |
-| GET    | /games/:id         | Dettaglio singolo gioco      |
-| POST   | /games             | Crea nuovo gioco             |
-| PUT    | /games/:id         | Aggiorna gioco               |
-| DELETE | /games/:id         | Elimina gioco                |
+| Metodo | Percorso      | Descrizione                                    |
+|--------|---------------|------------------------------------------------|
+| GET    | /games        | Restituisce la lista dei giochi (con filtri)   |
+| GET    | /games/:id    | Restituisce un gioco specifico                 |
+| POST   | /games        | Crea un nuovo gioco                            |
+| PUT    | /games/:id    | Aggiorna un gioco esistente                    |
+| DELETE | /games/:id    | Elimina un gioco                               |
 
 ### Sistema di Ricerca e Filtri (GET /games)
-L'endpoint GET /games supporta un sistema di query string avanzato che permette di filtrare i giochi in base a criteri esatti o range numerici.
-Il sistema utilizza dei suffissi da aggiungere al nome del campo desiderato.
 
-#### Campi Testuali (Name, Room, Location)
+L'endpoint `GET /games` supporta un sistema di query string che permette di filtrare i risultati tramite suffissi applicati al nome del campo.
 
-- _e (Exact): Cerca l'esatta corrispondenza (es. Name_e=Catan trova solo "Catan").
-- _c (Contains): Cerca un testo parziale (es. Name_c=cat trova "Catan", "Catan: Marinai", ecc.).
+#### Campi testuali: `Name`, `Location`, `Description`, `UrlBigImage`, `UrlSmallImage`, `Room`
+
+
+| Suffisso | Significato             | Esempio        |
+|----------|-------------------------|----------------|
+| `_e`     | Corrispondenza esatta   | `Name_e=Catan` |
+| `_c`     | Corrispondenza parziale | `Name_c=cat`   |
   
-#### Campi Numerici (Time, Player, MinPlayer, MaxPlayer, Age, MinAge, Year, Bookcase, Shelf)
-- _eq (Equal): Uguale a (es. Time_eq=60).
-- _gt (Greater Than): Maggiore di (es. Time_gt=30).
-- _ge (Greater or Equal): Maggiore o uguale a (es. MinPlayer_ge=2).
-- _lt (Less Than): Minore di (es. Time_lt=120).
-- _le (Less or Equal): Minore o uguale a (es. MaxPlayer_le=5).
+#### Campi numerici: `MinPlayer`, `MaxPlayer`, `MinAge`, `Time`, `Year`
 
-_Nota sulle validazioni_: I filtri sono controllati dal backend. Inviare filtri in conflitto (es. Time_eq=60&Time_gt=50 oppure Player_gt=2&Player_ge=3) genererà un errore 400 Bad Request.
+| Suffisso  | Significato           | Esempio           |
+|-----------|-----------------------|-------------------|
+| `_eq`     | Uguale a              | `Time_eq=60`      |
+| `_gt`     | Maggiore di           | `Time_gt=30`      |
+| `_ge`     | Maggiore o uguale a   | `MinPlayer_ge=2`  |
+| `_lt`     | Minore di             | `Time_lt=120`     |
+| `_le`     | Minore o uguale a     | `MaxPlayer_le=5`  |
+
+**Note:**
+- Filtri in conflitto (es. `Time_eq=60&Time_gt=50` oppure `Time_ge=30&Time_gt=30`) restituiscono `400 Bad Request`.
+- `Year` è un campo opzionale: i giochi senza anno catalogato non compaiono nei risultati filtrati per anno.
+- Più filtri possono essere combinati liberamente tra campi diversi (es. `Name_c=catan&Time_lt=100&Player_ge=2`).
 
 ## Esempi di richieste e risposte
 Vediamo di seguito degli esempi di richieste e risposte: 
@@ -79,10 +97,10 @@ Vediamo di seguito degli esempi di richieste e risposte:
 ### GET /games
 
 ```
-GET /games?q=catan&limit=10&offset=0
+GET /games
 ```
 
-Risposta:
+Risposta `200 OK`:
 ```json
 [
     {
@@ -113,7 +131,15 @@ Risposta:
     }
 ]
 ```
+
+Con filtri:
+
+```
+GET /games?Name_c=catan&Time_lt=100&Player_ge=3
+```
+
 ### GET /games/:id
+
 ```
 GET /games/1
 ```
@@ -134,12 +160,14 @@ Risposta `200 OK`:
     "MinAge": 10
 }
 ```
+
 Risposta `404 Not Found`:
 ```json
 { "status": "error", "message": "Game not found" }
 ```
 
 ### POST /games 
+
 ```
 POST /games
 Content-Type: application/json
@@ -187,7 +215,6 @@ Risposta `200 OK`:
  
 ```
 DELETE /games/52
-X-Auth-Token: <token>
 ```
  
 Risposta `200 OK`:
