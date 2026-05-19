@@ -1,7 +1,7 @@
 const PATHS = {
-    navbar:  './components/navbar.html',        footer:  './components/footer.html',
-    popup:   './components/pop-up.html',        formGame:    './views/mainFormGame.html',
-    allGames:    './views/mainAllGames.html',   detailGame:  './views/mainDetailGame.html',
+    navbar:   './components/navbar.html',       footer:  './components/footer.html',
+    popup:    './components/popup.html',        formGame:    './views/mainFormGame.html',
+    allGames: './views/mainAllGames.html',      detailGame:  './views/mainDetailGame.html',
 }
 
 const TITLES = {
@@ -56,7 +56,7 @@ export async function loadMainModifiedGames(gameName){
 export async function loadMainDetailGame(gameName){
     const titleEl = document.getElementById(MAIN_TITLE_ID);
     
-    if(titleEl) { titleEl.innerText = `${MAIN_DETAIL_GAME_TITLE} ${gameName}`; }
+    if(titleEl) { titleEl.innerText = `${TITLES.detailGame} ${gameName}`; }
     else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
     
     await loadComponent(PATHS.detailGame, 'main-placeholder');
