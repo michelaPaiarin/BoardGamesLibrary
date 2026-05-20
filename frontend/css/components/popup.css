@@ -1,5 +1,75 @@
+.popup {
+    @apply  w-full max-w-md m-auto p-0
+            bg-card-bg rounded-xl shadow-2xl
+            border border-border-warm
+            outline-none overflow-hidden;
+}
+
+/* ── Backdrop ────────────────────────────────────────────────
+   Tono marrone caldo invece del nero puro — più coerente
+   con la palette del sito.
+──────────────────────────────────────────────────────────── */
+#popup::backdrop {
+    background: rgba(61, 39, 35, 0.55);
+    @apply blur-sm;
+}
+
+/* ---------------------------------- HEADER ----------------------------------*/
+
+.popup-header {
+    @apply  flex items-center gap-3 px-5 py-3;
+}
+
+.popup-icon {
+    @apply  w-8 h-8 flex-shrink-0
+            flex items-center justify-center
+            rounded-full bg-white/20
+            text-sm font-bold text-white;
+}
+
+.popup-title {
+    @apply  flex-1
+            font-bold font-family-title
+            text-base text-wood-light;
+}
+
+.popup-close-btn {
+    @apply  bg-transparent shadow-none px-2 py-0
+            text-wood-light/60 text-lg font-bold
+            transition-colors duration-150
+            hover:text-wood-light;
+}
+
+/* ---------------------------------- CONTENT ---------------------------------*/
+
+.popup-content {
+    @apply  px-5 py-5
+            bg-card-bg
+            text-text-primary text-sm leading-relaxed
+            min-h-16;
+}
+
+/* ---------------------------------- FOOTER ----------------------------------*/
+
+.popup-footer {
+    @apply  flex justify-end items-center gap-3 px-5 py-4
+            bg-card-bg
+            border-t border-border-warm;
+}
+
+.popup-footer-single, .popup-footer-double                  { @apply flex;   }
+.popup-footer-single.hidden, .popup-footer-double.hidden    { @apply hidden; }
+
+/* ------------------------------ SPECIFIC STYLES ------------------------------*/
+
+.popup-error   .popup-header { @apply bg-brand-danger;  } 
+.popup-confirm .popup-header { @apply bg-wood-dark;     }  
+.popup-success .popup-header { @apply bg-brand-success; }  
+.popup-warn    .popup-header { @apply bg-shelf-accent;  }  
+.popup-info    .popup-header { @apply bg-ink-dark;      }  
+
 .popup-error   .popup-icon::before { content: '✕'; }
-.popup-confirm .popup-icon::before { content: '?'; }
+.popup-confirm .popup-icon::before { content: '?';  }
 .popup-success .popup-icon::before { content: '✓'; }
-.popup-warn    .popup-icon::before { content: '!'; }
-.popup-info    .popup-icon::before { content: 'i'; }
+.popup-warn    .popup-icon::before { content: '!';  }
+.popup-info    .popup-icon::before { content: 'i';  }

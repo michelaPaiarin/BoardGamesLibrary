@@ -8,9 +8,10 @@
   --color-text-title: #3e2723;
   --color-text-primary: #333333;
   --color-text-secondary: #666666;
-  --color-text-danger: #b91c1c;         /* red-700 */
+  --color-text-danger: #7f1d1d;
 
   --color-background-main: #e8dcc7; 
+  --color-backdrop: rgba(61, 39, 35, 0.55);
   --color-card-bg: #fdfaf5;         
   --color-ink-dark: #2d1b14;        
   --color-ink-light: #795c4b;       
@@ -22,11 +23,13 @@
   --color-brand-primary: #065f46;         /* emerald-800 */
   --color-brand-primary-hover: #059669;   /* emerald-600 */
   
-  --color-brand-secondary: #78716c;       /* stone-500 */
-  --color-brand-secondary-hover: #a8a29e; /* stone-400 */
+  --color-brand-secondary: #78716c;       /* stone-500    */
+  --color-brand-secondary-hover: #a8a29e; /* stone-400    */
   
-  --color-brand-danger: #b91c1c;          /* red-700 */
-  --color-brand-danger-hover: #ef4444;    /* red-500 */
+  --color-brand-danger: #7f1d1d;          /* red-900      */ 
+  --color-brand-danger-hover: #991b1b;   /* red-800       */
+
+  --color-brand-success: #14532d;          /* green-900  */
 }
 
 
