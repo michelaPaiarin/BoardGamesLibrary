@@ -74,12 +74,6 @@ export const loadAllGameList = async function() {
     console.log("Caricamento della lista di tutti i giochi...");
     await Loader.loadMainAllGames();
     await printAllGames();
-
-    document.querySelector('#filter-15minutes').addEventListener('click', () => 
-        PopUp.openPopUp(PopUp.TYPE.CONFIRM, {title: 'test', message: 'testMessage', onConfirm: () => 
-            PopUp.openPopUp(PopUp.TYPE.ERROR, {title: 'error', messagge: 'non cliccare okey!', onOK: PopUp.closePopUp})
-        })
-    );
-
+    
     document.querySelector('.addGameButton').addEventListener('click', () => loadAddGame(''));
 };
