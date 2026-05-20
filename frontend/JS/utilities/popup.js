@@ -1,3 +1,8 @@
+export const TYPE = {
+    ERROR:   'Error',   WARN:    'Warn',    INFO:    'Info',
+    SUCCESS: 'Success', CONFIRM: 'Confirm'
+};
+
 const POPUP_CONFIG = {
     Error:   { class: 'popup-error',       footer: 'single' },
     Warn:    { class: 'popup-warn',        footer: 'single' },
@@ -14,10 +19,11 @@ const ID = {
 const CLEARABLE_ID = [ID.Title, ID.Text];
 const FOOTER_ID = ['.popup-footer-single', '.popup-footer-double'];
 
-export const TYPE = {
-    ERROR:   'Error',   WARN:    'Warn',    INFO:    'Info',
-    SUCCESS: 'Success', CONFIRM: 'Confirm'
-};
+const FOOTER_BUTTONS = [
+    { id: ID.BtnOk,         keyAction: 'onOk'       },
+    { id: ID.BtnConfirm,    keyAction: 'onConfirm'  },
+    { id: ID.BtnCancel,     keyAction: 'onCancel'   }
+];
 
 const footerPrefix = '.popup-footer-';
 
@@ -25,18 +31,16 @@ let previousFocus = null;
 let popUp = null;           //The DOM element
 
 export function init(){
-    document.querySelectorAll('dialog.popup').forEach(dialog => {
-        dialog.addEventListener('close', () => {
-            previousFocus?.focus()
-        });
-    });
     popUp = document.getElementById('popup');
+    popUp.querySelector('.popup-close-btn').addEventListener('click', () => popUp.close());
+    popUp.addEventListener('close', () => previousFocus?.focus());
+    popUp.addEventListener('click', (e) => { if (e.target === popUp) popUp.close(); });
 }
 
 function clearPopUp(){
-    CLEARABLE_ID.forEach(id => popup.querySelector(id).textContent = '');
-    FOOTER_ID.forEach(id => popup.querySelector(id).classList.add('hidden'));
-    Object.values(POPUP_CONFIG).forEach(config => dialog.classList.remove(config.class));
+    CLEARABLE_ID.forEach(id => popUp.querySelector(id).textContent = '');
+    popUp.querySelectorAll('.popup-footer').forEach(f => f.classList.add('hidden'));
+    Object.values(POPUP_CONFIG).forEach(config => popUp.classList.remove(config.class));
 }
 
 /**
@@ -54,22 +58,12 @@ export function openPopUp(Type, popUpData){
 
     popUp.classList.add(config.class);
 
-    console.log(footerPrefix + config.footer);
-    console.log(dialog.querySelector(footerPrefix + config.footer));
-
     popUp.querySelector(footerPrefix + config.footer).classList.remove('hidden');
 
-    if(config.footer == 'single'){
-        popUp.querySelector(ID.BtnOk).addEventListener('click', popUpData.onOk, {once: true});
-    }else{
-        popUp.querySelector(ID.BtnConfirm).addEventListener('click', popUpData.onConfirm, {once: true});
-        popUp.querySelector(ID.BtnCancel).addEventListener('click', popUpData.onCancel, {once: true});
-    }   
+    FOOTER_BUTTONS.forEach(({ id, keyAction }) => {
+        popUp.querySelector(id).onclick = () => { popUpData[keyAction]?.();    popUp.close(); };
+    });
     
     previousFocus = document.activeElement
-    dialog.showModal()
-}
-
-export function closePopUp(){
-    console.log('ho chiuso il popup');
+    popUp.showModal()
 }
