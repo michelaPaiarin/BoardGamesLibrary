@@ -1,0 +1,5 @@
+.popup-error   .popup-icon::before { content: '✕'; }
+.popup-confirm .popup-icon::before { content: '?'; }
+.popup-success .popup-icon::before { content: '✓'; }
+.popup-warn    .popup-icon::before { content: '!'; }
+.popup-info    .popup-icon::before { content: 'i'; }

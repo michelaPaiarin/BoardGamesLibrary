@@ -1,5 +1,6 @@
 import * as Loader         from "./utilities/loader.js";
 import * as LoaderError    from "./utilities/loaderError.js";
+import * as PopUp          from "./utilities/popup.js";             
 
 import { printAllGames   } from "./views/gamesList.js";
 import { fillGameDetails } from "./views/gameDetail.js";
@@ -7,6 +8,8 @@ import { gameSaveForm, fillGameForm, setConstraintGameForm } from "./views/gameF
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Avvio dell'applicazione...");
+    await Loader.init();
+    PopUp.init();
     await loadAllGameList();
 });
 
@@ -69,8 +72,14 @@ export const loadDetailGame = async function(id) {
 
 export const loadAllGameList = async function() {
     console.log("Caricamento della lista di tutti i giochi...");
-    await Loader.loadComponents();
+    await Loader.loadMainAllGames();
     await printAllGames();
+
+    document.querySelector('#filter-15minutes').addEventListener('click', () => 
+        PopUp.openPopUp(PopUp.TYPE.CONFIRM, {title: 'test', message: 'testMessage', onConfirm: () => 
+            PopUp.openPopUp(PopUp.TYPE.ERROR, {title: 'error', messagge: 'non cliccare okey!', onOK: PopUp.closePopUp})
+        })
+    );
 
     document.querySelector('.addGameButton').addEventListener('click', () => loadAddGame(''));
 };
