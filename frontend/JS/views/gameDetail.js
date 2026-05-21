@@ -1,5 +1,6 @@
 import { loadModifiedGames, loadDetailGame, loadAllGameList } from "../main.js";
-import { getGameById, deleteGame } from '../utilities/api.js';
+import { getGameById, deleteGame }  from '../utilities/api.js';
+import * as Notifier                from '../utilities/notifier.js';
 
 const ID = {
     Name: 'game-name',
@@ -38,19 +39,17 @@ async function fillGameFormWithGame(game) {
         loadModifiedGames(game.ID, () => loadDetailGame(game.ID));
     };
 
-    document.getElementById("delete-game").onclick = async (event) => {
-        console.log("Cancellazione gioco:", game.ID);
-        if(confirm("Sei sicuro di voler eliminare il gioco?")){
+    document.getElementById("delete-game").onclick = (event) => {
+        Notifier.askDeleteConfirmation(game.Name, async () => {
+            console.log("Cancellazione gioco:", game.ID);
             try{
                 await deleteGame(game.ID);
-                alert("Operazione completata con successo! Puoi tornare alla pagina precedente.");
-                await loadAllGameList();
+                Notifier.showDeleteSuccess(loadAllGameList);  
             }catch(e){
                 console.error("Errore durante la cancellazione del gioco:", e);
-                alert("Errore durante la cancellazione del gioco: " + e.message);
+                // I don't pass onOk parameters because it doesn't have to do anything
+                Notifier.showSpecificApiError(e, Notifier.showDeleteError);
             }
-        }else{
-            console.log("Cancellazione annullata da parte dell'utente");
-        }
+        }, () => { console.log("Cancellazione annullata da parte dell'utente"); });
     };
 }

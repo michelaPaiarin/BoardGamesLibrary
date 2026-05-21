@@ -1,6 +1,7 @@
 import { loadAllGameList                                } from '../main.js';
 import { getGameById, postGame, putGame                 } from '../utilities/api.js';
 import { validateGame, cleanGameData, GAME_CONSTRAINTS  } from '../sharedExports.js';
+import * as Notifier                                      from '../utilities/notifier.js';
 
 const errorSufix = '-error';
 
@@ -41,7 +42,6 @@ async function fillGameFormWithGame(game) {
 
         element.value = game[key];
     }
-
 }
 
 function addSpecificProperties(proprietis, constraintsArray) {
@@ -114,7 +114,7 @@ export async function gameSaveForm(event, previusPage) {
         gameData = cleanGameData(gameData);
     } catch (error) {
         console.error("Errore durante la pulizia dei dati del gioco:", error);
-        alert("Errore nei dati inseriti: " + error.message);
+        Notifier.showDataError();
         return;
     }
 
@@ -141,17 +141,23 @@ async function saveChange(game, method, previusPage, id = null) {
     try {
         let response;
         switch (method) {
-            case 'POST' : response = await postGame(game);      break;
-            case 'PUT'  : response = await putGame(id, game);   break;
+            case 'POST' : response = await postGame(game);          break;
+            case 'PUT'  : response = await putGame(id, game);       break;
             default     : throw new Error("Metodo non supportato");
         }
         
         if(method == 'POST'){ console.log(`Id nuovo gioco: ${response.gameId}`); }
-
-        alert("Operazione completata con successo! Puoi tornare alla pagina precedente.");
-        previusPage();
-    } catch (error) {
-        console.error("Errore durante il salvataggio del gioco:", error);
-        alert("Errore durante il salvataggio del gioco: " + error.message);
+        
+        switch (method) {
+            case 'POST' : Notifier.showCreateSuccess(previusPage);  return;
+            case 'PUT'  : Notifier.showModifySuccess(previusPage);  return;
+        }
+    } catch (e) {
+        console.error("Errore durante il salvataggio:", e);
+        // I don't pass onOk parameters because it doesn't have to do anything
+        switch (method) {
+            case 'POST' : Notifier.showSpecificApiError(e, Notifier.showCreateError);  return;
+            case 'PUT'  : Notifier.showSpecificApiError(e, Notifier.showModifyError);  return;
+        }
     }
 }

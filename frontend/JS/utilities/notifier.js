@@ -13,6 +13,15 @@ const MESSAGES = {
     MODIFY_ERROR: {         type: TYPE.ERROR,       title: 'ERRORE SALVATAGGIO',
         message: "Impossibile aggiornare il gioco."
     },
+    DELETE_ERROR:{           type: TYPE.ERROR,       title: 'ERRORE CANCELLAZIONE',
+        message: "Impossibile eliminare il gioco."
+    },
+    DATA_ERROR: {            type: TYPE.ERROR,       title: 'ERRORE',
+        message: "Ci sono degli errori nei dati inseriti. Correggili e riprova."
+    },
+    NOT_FOUND_ERROR:{       type: TYPE.ERROR,       title: 'ERRORE 404',
+        message: "Gioco non trovato. Ti consigliamo di ricaricare la pagina per vedere i dati aggiornati.",
+    },
     CREATE_SUCCESS: {       type: TYPE.SUCCESS,     title: 'OPERAZIONE COMPLETATA',
         message: "Gioco creato con successo!"
     },
@@ -27,7 +36,10 @@ const MESSAGES = {
     },
     DELETE_GAME_CONFIRM: {  type: TYPE.CONFIRM,     title: 'ELIMINA GIOCO',
         message: 'Sei sicuro di voler eliminare definitivamente'
-    }
+    },
+    CUSTOM_ERROR:     {   type: TYPE.ERROR,       title: 'ERRORE'                 },
+    CUSTOM_SUCCESS:   {   type: TYPE.SUCCESS,     title: 'OPERAZIONE COMPLETATA'  },
+    CUSTOM_CONFIRM:   {   type: TYPE.CONFIRM,     title: 'SEI SICURO?'            }
 };
 
 function notifyMessage(messageConfig, callbacks = {}) {
@@ -40,6 +52,17 @@ export function showErrorGetGame(onOk)  { notifyMessage(MESSAGES.GET_GAME_ERROR,
 export function showNetworkError(onOk)  { notifyMessage(MESSAGES.NETWORK_ERROR,  { onOk });  }
 export function showCreateError(onOk)   { notifyMessage(MESSAGES.CREATE_ERROR,   { onOk });  } 
 export function showModifyError(onOk)   { notifyMessage(MESSAGES.MODIFY_ERROR,   { onOk });  }
+export function showDeleteError(onOk)   { notifyMessage(MESSAGES.DELETE_ERROR,   { onOk });  }
+export function showDataError(onOk)     { notifyMessage(MESSAGES.DATA_ERROR,     { onOk });  }
+export function showNotFoundError(onOk) { notifyMessage(MESSAGES.NOT_FOUND_ERROR,{ onOk });  }
+
+export function showSpecificApiError(error, defaultErrorHandler, onOk) {
+    if (!error.status)        { Notifier.showNetworkError();  return; }
+    if (error.status === 404) { Notifier.showNotFoundError(); return; }
+    if (defaultErrorHandler)  { defaultErrorHandler(onOk);    return; }
+
+    showCustomError(error.message || "Si è verificato un errore imprevisto.", onOk);
+}
 
 //---------------------------------  SUCCESS (TYPE.SUCCESS) --------------------------------- 
 
@@ -54,10 +77,17 @@ export function askLeaveFormConfirmation(onConfirm, onCancel) {
 }
 
 export function askDeleteConfirmation(gameName, onConfirm, onCancel) {
-    // Creiamo una copia "al volo" unendo il messaggio base al nome del gioco
     const messageConfig = {
         ...MESSAGES.DELETE_GAME_CONFIRM,
         message: `${MESSAGES.DELETE_GAME_CONFIRM.message} "${gameName}"?`
     };
     notifyMessage(messageConfig, { onConfirm, onCancel });
 }
+
+//---------------------------------------- PERSONAL ----------------------------------------
+
+export function showCustomMessage (type, title, message, callbacks = {}){ notifyMessage({type, title, message}, callbacks);   }
+
+export function showCustomError(message, onOK)                  { notifyMessage({ ...MESSAGES.CUSTOM_ERROR, message   }, { onOk                });}
+export function showCustomSuccess(message, onOk)                { notifyMessage({ ...MESSAGES.CUSTOM_SUCCESS, message }, { onOk                });}
+export function showCustomConfirm(message, onConfirm, onCancel) { notifyMessage({ ...MESSAGES.CUSTOM_CONFIRM, message }, { onConfirm, onCancel });}

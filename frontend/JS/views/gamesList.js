@@ -27,11 +27,21 @@ export async function printAllGames(filter = {}) {
         console.log("Hai chiesto i seguiti filtri " + JSON.stringify(filter));
         console.log("Ci pensiamo per ora eccoteli tutti");
     }
+    
+    const container = document.getElementById('main-home');
+    let games;
 
-    const games = await getAllGames();
+    try       { games = await getAllGames(); }
+    catch (e) {
+        console.error("Errore durante il recupero della lista giochi:", e);
+        container.innerHTML = '<p class="text-red-500 text-center mt-4">Impossibile comunicare con il server. Ricarica la pagina.</p>';
+        Notifier.showSpecificApiError(e, null);
+        
+        return;
+    }
+
     console.log("Giochi ricevuti dal server:", games);
     updateGamesDetails(games);
-    const container = document.getElementById('main-home');
     container.innerHTML = ''; 
 
     const cardTemplate = await getTemplate();

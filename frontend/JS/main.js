@@ -1,6 +1,6 @@
 import * as Loader         from "./utilities/loader.js";
-import * as LoaderError    from "./utilities/loaderError.js";
-import * as PopUp          from "./utilities/popup.js";             
+import * as Notifier       from "./utilities/notifier.js";
+import * as PopUp          from "./components/popup.js";             
 
 import { printAllGames   } from "./views/gamesList.js";
 import { fillGameDetails } from "./views/gameDetail.js";
@@ -47,12 +47,14 @@ export const loadModifiedGames = async function(id, previusPage) {
         backBtn.addEventListener('click', () => {
             const currentState = getFormStateString(form);
             if(currentState !== form.dataset.initialState){
-                if(confirm("Se torni indietro le modifiche andranno perse. Sei sicuro?")){ previusPage(); }
+                Notifier.askLeaveFormConfirmation(previusPage, () => {
+                    console.log("L'utente ha deciso di restare nel form");
+                });
             }else{ previusPage(); }
         });
     } catch (error) {
         console.error("Errore durante il caricamento dei dettagli del gioco:", error);
-        LoaderError.showErrorGetGame(loadAllGameList);
+        Notifier.showSpecificApiError(error, () => Notifier.showErrorGetGame(loadAllGameList));
     }
 };
 
