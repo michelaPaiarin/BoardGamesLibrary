@@ -76,6 +76,5 @@ export const loadAllGameList = async function() {
     console.log("Caricamento della lista di tutti i giochi...");
     await Loader.loadMainAllGames();
     await printAllGames();
-    
-    document.querySelector('.addGameButton').addEventListener('click', () => loadAddGame(''));
+    document.getElementById('add-game-btn').addEventListener('click', () => loadAddGame(''));
 };

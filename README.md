@@ -76,7 +76,7 @@ L'endpoint `GET /games` supporta un sistema di query string che permette di filt
 | `_e`     | Corrispondenza esatta   | `Name_e=Catan` |
 | `_c`     | Corrispondenza parziale | `Name_c=cat`   |
   
-#### Campi numerici: `MinPlayer`, `MaxPlayer`, `MinAge`, `Time`, `Year`
+#### Campi numerici: `MinPlayer`, `MaxPlayer`, `MinAge`, `Time`, `Year`, `Player`
 
 | Suffisso  | Significato           | Esempio           |
 |-----------|-----------------------|-------------------|
