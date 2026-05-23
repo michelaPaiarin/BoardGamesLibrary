@@ -1,52 +1,53 @@
-/*------ title-section ------ */
-
-#title-section {
-    @apply text-center py-5 px-4 mx-auto;
-}
-
-#title-section p {
-    @apply text-center;
-}
-
-/*------ content-title-section ------ */
-
-#content-title-section {
-    @apply p-4;
-}
-
-#content-title-section h2 {
-    @apply text-2xl font-bold text-text-title;
-}
-
 /*------ main-section ------ */
 
-#main-section {
-    @apply  flex flex-col
-            md:flex-row gap-8;
+#main-section { @apply flex flex-col        md:flex-row gap-8;  }
+#main-home    { @apply w-full min-h-125     md:w-3/4;           }
+
+.game-list-container {
+    @apply  grid grid-cols-1 gap-6 justify-items-center w-full
+            sm:grid-cols-2   lg:grid-cols-3     xl:grid-cols-4;
 }
 
-#main-home {
-    @apply  w-full min-h-125
-            md:w-3/4;
-}
+/*------ right-section ------ */
 
 #main-right-section {
-    @apply  w-full  flex flex-col gap-4 text-left
+    @apply  w-full flex flex-col gap-4
             md:w-1/4;
 }
 
 .main-right-container{
-    @apply  w-full bg-card-bg rounded-lg shadow-lg p-5
+    @apply  bg-card-bg rounded-lg shadow-lg p-5
             border-2 border-border-warm;
 }
 
-#quick-filter-grid {
-    @apply grid grid-cols-2 gap-2;
+.title-right-box { 
+    @apply  mb-4 pb-2 
+            text-xl font-bold text-text-title font-family-title
+            border-b-2 border-border-warm border-dashed ;
 }
 
-.game-list-container {
-    @apply  grid grid-cols-1 gap-6 justify-items-center w-full
-            sm:grid-cols-2
-            lg:grid-cols-3
-            xl:grid-cols-4;
+#search-box             { @apply flex flex-wrap items-stretch gap-2;  }
+#search-group-input     { @apply flex-[999_1_150px];                  }
+#search-group-btn       { @apply flex gap-2 flex-[1_1_90px];          }
+#advanced-search-btn, #clear-filter-btn { @apply flex-1;              }
+
+#search-box input { 
+    @apply  w-full p-2 bg-white text-ink-dark
+            border border-border-warm rounded-md 
+            focus:outline-none focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary
+            transition-colors;
+}
+
+#quick-filter-grid { @apply grid grid-cols-2 gap-2;                                 }
+
+.stat-row     { @apply mt-3 text-sm text-text-secondary;                            }
+.stat-value   { @apply font-bold text-text-primary;                                 }
+
+#legend-grid  { @apply flex flex-col gap-3;                                         }
+.legend-item  { @apply flex items-center gap-3 text-sm text-text-primary font-bold; }
+
+.legend-badge {
+    @apply  px-2 py-1 w-10 bg-wood-light
+            text-wood-dark text-center font-bold 
+            rounded border border-border-warm shadow-sm;
 }

@@ -20,18 +20,18 @@
   --font-family-title: 'Noteworty', cursive;
   --font-family-body: 'Open Sans', sans-serif;
 
-  --color-brand-primary: #065f46;         /* emerald-800 */
-  --color-brand-primary-hover: #059669;   /* emerald-600 */
+  --color-brand-primary: #5d4037;           /* wood-dark    */
+  --color-brand-primary-hover: #8d6e63;     /* shelf-accent */
   
-  --color-brand-secondary: #78716c;       /* stone-500    */
-  --color-brand-secondary-hover: #a8a29e; /* stone-400    */
+  --color-brand-secondary: #78716c;         /* stone-500    */
+  --color-brand-secondary-hover: #a8a29e;   /* stone-400    */
   
-  --color-brand-danger: #7f1d1d;          /* red-900      */ 
-  --color-brand-danger-hover: #991b1b;   /* red-800       */
+  --color-brand-danger: #7f1d1d;            /* red-900      */ 
+  --color-brand-danger-hover: #991b1b;      /* red-800      */
 
-  --color-brand-success: #14532d;          /* green-900  */
+  --color-brand-success: #065f46;           /* emerald-800  */
+  --color-brand-success-hover: #059669;     /* emerald-600  */
 }
-
 
 /*------ ui-components ------ */
 
@@ -48,6 +48,7 @@
 
 /*------ views-components ------ */
 
+@import "./views/index.css";
 @import "./views/mainAllGames.css";
 @import "./views/mainFormGame.css";
 @import "./views/mainDetailGame.css";

@@ -1,0 +1,9 @@
+/*------ title-section ------ */
+
+#title-section   { @apply text-center py-5 px-4 mx-auto; }
+#title-section p { @apply text-center; }
+
+/*------ content-title-section ------ */
+
+#content-title-section      { @apply p-4;                                   }
+#content-title-section h2   { @apply text-2xl font-bold text-text-title;  }
