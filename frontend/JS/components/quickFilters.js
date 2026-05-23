@@ -1,4 +1,5 @@
 import { QUICK_FILTERS } from "../sharedExports.js";
+import { updateFilters, FILTER_ACTION} from "../utilities/filterManager.js";
 
 const QUICK_FILTERS_ID = 'quick-filter-grid';
 
@@ -19,9 +20,7 @@ export function renderQuickFilterButton() {
         button.addEventListener('click', () => {
             button.classList.toggle('active');
             const state = (button.classList.contains('active')) ? 'ACTIVATED' : 'DEACTIVATED';
-
-            if(state === 'ACTIVATED'){ console.log(`Hai attivato il filtro ${filter.id}`); }
-            else{ console.log(`Hai disattivato il filtro ${filter.id}`); }
+            updateFilters(filter.query, (state === 'ACTIVATED') ? FILTER_ACTION.ADD : FILTER_ACTION.REMOVE)
         });
         
         quickFilterContainer.appendChild(button);

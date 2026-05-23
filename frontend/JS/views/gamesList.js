@@ -2,6 +2,8 @@ import * as GAME_CARD_RENDER        from "../components/gameCard.js";
 import * as LEGEND_RENDER           from "../components/locationLegend.js";
 import * as STATISTICS_RENDER       from "../components/collectionStatistics.js";
 import * as QUICK_FILTERS_RENDER    from "../components/quickFilters.js";
+import * as SEARCH_BAR              from "../components/searchBar.js";
+import * as FILTER_MANAGER          from "../utilities/filterManager.js";
 
 import { getAllGames } from "../utilities/api.js";
 
@@ -24,7 +26,16 @@ async function getGamesList(filter) {
     }
 }
 
-export async function printAllGames(filter = {}) {
+export async function printAllGames() {
+    LEGEND_RENDER.renderLocationLegend();
+    QUICK_FILTERS_RENDER.renderQuickFilterButton();
+    SEARCH_BAR.initSearchBar();
+
+    activeFilters = {}
+    await loadGames(activeFilters); 
+}
+
+async function loadGames(filter = {}) {
     const container = document.getElementById(GAME_LIST_ID);
     if (!container){console.error('Container not created'); return; } // Checking to be safe. It shouldn't happen.
 
@@ -37,11 +48,8 @@ export async function printAllGames(filter = {}) {
     }
     
     await renderGameList(games, container);
-
-    // Fill the sidebar with data and dynamic elements
-    LEGEND_RENDER.renderLocationLegend();
+    FILTER_MANAGER.init(loadGames);
     STATISTICS_RENDER.renderCollectionStatics(games);
-    QUICK_FILTERS_RENDER.renderQuickFilterButton();
 }
 
 async function renderGameList(gameList, container){
@@ -59,3 +67,4 @@ async function renderGameList(gameList, container){
     container.className = GAME_LIST_CLASS_NAME;
     gameList.forEach(game => { container.appendChild(GAME_CARD_RENDER.createGameCard(game)); }); 
 }
+
