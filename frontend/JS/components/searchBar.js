@@ -1,4 +1,4 @@
-import { updateFilters, FILTER_ACTION } from "../utilities/filterManager.js";
+import { updateFiltersAndRefresh, FILTER_ACTION } from "../utilities/filterManager.js";
 
 const SEARCH_INPUT_ID = 'search-game-input';
 const SEARCH_BTN_ID   = 'search-btn';
@@ -13,12 +13,12 @@ export function initSearchBar() {
         const value = input.value.trim();
         if (!value) {  input.setCustomValidity('Inserisci un titolo da cercare'); input.reportValidity();  return; }
         input.setCustomValidity(''); // reset errore
-        updateFilters({ Name_c: value }, FILTER_ACTION.ADD);
+        updateFiltersAndRefresh({ Name_c: value }, FILTER_ACTION.ADD);
 
     });
 
     clearBtn.addEventListener('click', () => {
         input.value = '';
-        updateFilters({ Name_c: null }, FILTER_ACTION.REMOVE);
+        updateFiltersAndRefresh({ Name_c: null }, FILTER_ACTION.REMOVE);
     });
 }

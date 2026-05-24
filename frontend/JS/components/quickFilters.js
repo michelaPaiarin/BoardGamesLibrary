@@ -21,7 +21,7 @@ export function renderQuickFilterButton() {
             button.classList.toggle('active');
             const isActive = button.classList.contains('active');
             
-            if(!isActive){ updateFilters(filter.query, FILTER_ACTION.REMOVE); return;}
+            if(!isActive){ updateFiltersAndRefresh(filter.query, FILTER_ACTION.REMOVE); return;}
 
             const group = INCOMPATIBLE_QUICK_FILTER.find(g => g.includes(filter.id));
 

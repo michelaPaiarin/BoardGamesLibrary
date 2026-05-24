@@ -33,8 +33,16 @@ async function putJSONonID(route, id, options) {
     outputDiv.textContent = JSON.stringify(response, null, 4);
 }
 
-export async function getAllGames() {
-    return await runRoute('/games');
+function buildQueryString(filters) {
+    const params = Object.entries(filters)
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
+    return '?' + params.join('&');
+}
+
+export async function getAllGames(filter = {}) {
+    const hasFilters = Object.keys(filter).length > 0;
+    const queryString = hasFilters ? buildQueryString(filter) : '';
+    return await runRoute(`/games${queryString}`);
 }
 
 export async function getGameById(id) {

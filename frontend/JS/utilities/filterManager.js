@@ -1,3 +1,5 @@
+import { cleanFilter, validateFilter } from "../sharedExports.js";
+
 export const FILTER_ACTION = { ADD: "add", REMOVE: "remove" };
 
 let activeFilters = {};
@@ -21,5 +23,13 @@ export function updateFilters(newFilters, action) {
 
 export async function updateFiltersAndRefresh(newFilters, action){
     updateFilters(newFilters, action);
-    await onFiltersChange(activeFilters);
+    
+    const cleaned = cleanFilter(activeFilters);
+    const result  = validateFilter(cleaned);
+    if (!result.valid) { 
+        console.error('Filtri non validi:', result.errors);
+        return; 
+    }
+
+    await onFiltersChange(cleaned);
 }

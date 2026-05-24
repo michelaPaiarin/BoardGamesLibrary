@@ -12,13 +12,7 @@ const GAME_LIST_CLASS_NAME = 'game-list-container';
 
 async function getGamesList(filter) {
     try {
-        if (Object.keys(filter).length > 0) {
-            console.log("Hai chiesto i seguiti filtri " + JSON.stringify(filter));
-            console.log("Ci pensiamo per ora eccoteli tutti");
-            //TODO: chima builder per filtri e fa la chiamata API con quelli
-            return await getAllGames();
-        }
-        return await getAllGames();
+        return await getAllGames(filter);
     } catch (e) {
         console.error("Errore durante il recupero della lista giochi:", e);
         Notifier.showSpecificApiError(e, null);
