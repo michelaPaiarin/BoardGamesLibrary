@@ -1,5 +1,5 @@
 .game-card {
-    @apply  bg-card-bg shadow-lg h-full flex flex-col
+    @apply  bg-card-bg shadow-lg flex flex-col
             border border-border-warm rounded-lg 
             overflow-hidden
             w-full max-w-[300px] mx-auto

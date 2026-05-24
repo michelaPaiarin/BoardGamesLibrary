@@ -4,7 +4,7 @@
 #main-home    { @apply w-full min-h-125     md:w-3/4;           }
 
 .game-list-container {
-    @apply  grid grid-cols-1 gap-6 justify-items-center w-full
+    @apply  grid grid-cols-1 gap-6 justify-items-center w-full items-start
             sm:grid-cols-2   lg:grid-cols-3     xl:grid-cols-4;
 }
 
