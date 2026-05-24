@@ -12,12 +12,14 @@ export function init(callback) {
  * @param {Object} newFilters - filters to add or remove (es: { Time_le: 30 })
  * @param {string} action - FILTER_ACTION.ADD o FILTER_ACTION.REMOVE
  */
-export async function updateFilters(newFilters, action) {
+export function updateFilters(newFilters, action) {
     switch (action) {
         case FILTER_ACTION.ADD:     activeFilters = { ...activeFilters, ...newFilters };            break;
         case FILTER_ACTION.REMOVE:  for (const key in newFilters) { delete activeFilters[key];}     break;
     }
+}
 
-    console.log('Filtri attuali:', activeFilters);
+export async function updateFiltersAndRefresh(newFilters, action){
+    updateFilters(newFilters, action);
     await onFiltersChange(activeFilters);
 }

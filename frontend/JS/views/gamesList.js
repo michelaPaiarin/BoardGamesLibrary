@@ -30,9 +30,9 @@ export async function printAllGames() {
     LEGEND_RENDER.renderLocationLegend();
     QUICK_FILTERS_RENDER.renderQuickFilterButton();
     SEARCH_BAR.initSearchBar();
+    FILTER_MANAGER.init(loadGames);
 
-    activeFilters = {}
-    await loadGames(activeFilters); 
+    await loadGames(); 
 }
 
 async function loadGames(filter = {}) {
@@ -48,7 +48,6 @@ async function loadGames(filter = {}) {
     }
     
     await renderGameList(games, container);
-    FILTER_MANAGER.init(loadGames);
     STATISTICS_RENDER.renderCollectionStatics(games);
 }
 

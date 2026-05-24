@@ -1,5 +1,5 @@
-import { QUICK_FILTERS } from "../sharedExports.js";
-import { updateFilters, FILTER_ACTION} from "../utilities/filterManager.js";
+import { QUICK_FILTERS, INCOMPATIBLE_QUICK_FILTER } from "../sharedExports.js";
+import { updateFilters, updateFiltersAndRefresh, FILTER_ACTION} from "../utilities/filterManager.js";
 
 const QUICK_FILTERS_ID = 'quick-filter-grid';
 
@@ -17,10 +17,28 @@ export function renderQuickFilterButton() {
         button.title = filter.tooltip;
         button.textContent = filter.label;
         
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
             button.classList.toggle('active');
-            const state = (button.classList.contains('active')) ? 'ACTIVATED' : 'DEACTIVATED';
-            updateFilters(filter.query, (state === 'ACTIVATED') ? FILTER_ACTION.ADD : FILTER_ACTION.REMOVE)
+            const isActive = button.classList.contains('active');
+            
+            if(!isActive){ updateFilters(filter.query, FILTER_ACTION.REMOVE); return;}
+
+            const group = INCOMPATIBLE_QUICK_FILTER.find(g => g.includes(filter.id));
+
+            if (group && isActive) {
+                group.filter(id => id !== filter.id).forEach(id => {
+                    const other = document.getElementById(id);
+                    if (!other){return;}
+                    
+                    if( other.classList.contains('active')){
+                        other.classList.remove('active');
+                        const otherFilter = QUICK_FILTERS.find(f => f.id === id);
+                        updateFilters(otherFilter.query, FILTER_ACTION.REMOVE);
+                    }
+                });
+            }
+        
+            await updateFiltersAndRefresh(filter.query, isActive ? FILTER_ACTION.ADD : FILTER_ACTION.REMOVE);
         });
         
         quickFilterContainer.appendChild(button);

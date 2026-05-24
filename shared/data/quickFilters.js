@@ -31,3 +31,8 @@ export const QUICK_FILTERS = [
         query: { MinAge_le: 8 } 
     }
 ];
+
+export const INCOMPATIBLE_QUICK_FILTER = [
+    ['filter-fast', 'filter-long'],
+    ['filter-solo', 'filter-3p', 'filter-party'],
+];
