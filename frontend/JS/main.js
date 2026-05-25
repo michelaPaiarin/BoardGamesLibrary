@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadAllGameList();
 });
 
-export const loadAddGame = async function() {
+export async function loadAddGame(){
     console.log("Hai cliccato su Aggiungi Gioco");
     await Loader.loadMainAddGame();
     await setConstraintGameForm();
@@ -30,7 +30,7 @@ function getFormStateString(form){
     return new URLSearchParams(new FormData(form)).toString()
 }
 
-export const loadModifiedGames = async function(id, previusPage) {
+export async function loadModifiedGames(id, previusPage) {
     console.log("Hai cliccato sul gioco con ID = " + id);
     
     await Loader.loadMainModifiedGames(); 
@@ -58,7 +58,7 @@ export const loadModifiedGames = async function(id, previusPage) {
     }
 };
 
-export const loadDetailGame = async function(id) {
+export async function loadDetailGame(id) {
     console.log("Hai cliccato sul gioco con ID = " + id);
     try {
         await Loader.loadMainDetailGame(id);
@@ -72,7 +72,7 @@ export const loadDetailGame = async function(id) {
     }    
 };
 
-export const loadAllGameList = async function() {
+export async function loadAllGameList() {
     console.log("Caricamento della lista di tutti i giochi...");
     await Loader.loadMainAllGames();
     await printAllGames();

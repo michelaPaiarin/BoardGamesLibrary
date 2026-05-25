@@ -43,8 +43,9 @@
 
 /*------ domain-components ------ */
 
-@import "./components/gameCard.css";
 @import "./components/popup.css";
+@import "./components/gameCard.css";
+@import "./components/emptyState.css";
 
 /*------ views-components ------ */
 

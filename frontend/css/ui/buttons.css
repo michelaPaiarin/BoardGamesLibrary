@@ -34,3 +34,7 @@ button {
 .quick-filter-btn.active {
     @apply bg-brand-primary-hover border-brand-primary-hover shadow-inner transform scale-95;
 }
+
+.empty-state-btn {
+    @apply px-8 py-3 text-lg font-bold rounded-lg transition-transform hover:scale-105;
+}

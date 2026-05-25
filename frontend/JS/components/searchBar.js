@@ -22,3 +22,8 @@ export function initSearchBar() {
         updateFiltersAndRefresh({ Name_c: null }, FILTER_ACTION.REMOVE);
     });
 }
+
+export function clearSeachBar(){
+    const searchInput = document.getElementById(SEARCH_INPUT_ID); 
+    if (searchInput) { searchInput.value = ''; }
+}

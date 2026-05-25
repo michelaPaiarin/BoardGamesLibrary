@@ -2,6 +2,7 @@ import { QUICK_FILTERS, INCOMPATIBLE_QUICK_FILTER } from "../sharedExports.js";
 import { updateFilters, updateFiltersAndRefresh, FILTER_ACTION} from "../utilities/filterManager.js";
 
 const QUICK_FILTERS_ID = 'quick-filter-grid';
+const ACTIVE_CLASSNAME = 'active'
 
 export function renderQuickFilterButton() {
     const quickFilterContainer = document.getElementById(QUICK_FILTERS_ID);
@@ -18,29 +19,37 @@ export function renderQuickFilterButton() {
         button.textContent = filter.label;
         
         button.addEventListener('click', async () => {
-            button.classList.toggle('active');
-            const isActive = button.classList.contains('active');
+            button.classList.toggle(ACTIVE_CLASSNAME);
+            const isActive = button.classList.contains(ACTIVE_CLASSNAME);
             
             if(!isActive){ updateFiltersAndRefresh(filter.query, FILTER_ACTION.REMOVE); return;}
-
-            const group = INCOMPATIBLE_QUICK_FILTER.find(g => g.includes(filter.id));
-
-            if (group && isActive) {
-                group.filter(id => id !== filter.id).forEach(id => {
-                    const other = document.getElementById(id);
-                    if (!other){return;}
-                    
-                    if( other.classList.contains('active')){
-                        other.classList.remove('active');
-                        const otherFilter = QUICK_FILTERS.find(f => f.id === id);
-                        updateFilters(otherFilter.query, FILTER_ACTION.REMOVE);
-                    }
-                });
-            }
-        
+            deactivateIncompatibleBtn(filter.id)
             await updateFiltersAndRefresh(filter.query, isActive ? FILTER_ACTION.ADD : FILTER_ACTION.REMOVE);
         });
         
         quickFilterContainer.appendChild(button);
+    }
+}
+
+function deactivateIncompatibleBtn(filterID){
+    const group = INCOMPATIBLE_QUICK_FILTER.find(g => g.includes(filterID));
+
+    if (group) {
+        group.filter(id => id !== filterID).forEach(id => {
+            const other = document.getElementById(id);
+            if (!other){return;}
+            
+            if(other.classList.contains(ACTIVE_CLASSNAME)){
+                other.classList.remove(ACTIVE_CLASSNAME);
+                const otherFilter = QUICK_FILTERS.find(f => f.id === id);
+                updateFilters(otherFilter.query, FILTER_ACTION.REMOVE);
+            }
+        });
+    }
+}
+
+export function resetFilters(){
+    for (const filter of QUICK_FILTERS) {
+        const btn = document.getElementById(filter.id).classList.remove(ACTIVE_CLASSNAME);
     }
 }

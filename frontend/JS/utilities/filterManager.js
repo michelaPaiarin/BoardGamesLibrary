@@ -33,3 +33,8 @@ export async function updateFiltersAndRefresh(newFilters, action){
 
     await onFiltersChange(cleaned);
 }
+
+export async function resetFilters(){
+    activeFilters = {};
+    await onFiltersChange(activeFilters);
+}

@@ -13,7 +13,7 @@ const MAIN_TITLE_ID = 'content-title';
 
 const loadOnce = [{'path': PATHS.navbar, 'placeholderId': 'navbar-placeholder'},
                   {'path': PATHS.footer, 'placeholderId': 'footer-placeholder'},
-                  {'path': PATHS.popup, 'placeholderId': 'popup-placeholder'}];
+                  {'path': PATHS.popup,  'placeholderId': 'popup-placeholder'}];
 
 export async function init() { for (const item of loadOnce) { await loadComponent(item.path, item.placeholderId); }}
 
@@ -25,6 +25,7 @@ export async function loadComponent(path, placeholderId) {
         document.getElementById(placeholderId).innerHTML = html;
     } catch (error) {
         console.error(`Non sono riuscito a caricare ${path}:`, error);
+        throw error;
     }
 }
 

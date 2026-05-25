@@ -6,8 +6,11 @@ const STATISTICS_ID = {
     avgTime: 'avg-time-val'
 }
 
+const EMPTY_VALUE = '-';
+
 export function renderCollectionStatics(gameList){
-    if(!gameList || gameList.length === 0){return;} //The values ​​are zero by default
+    resetCollectionStatics();
+    if(!gameList || gameList.length === 0){return;} 
 
     let span = document.getElementById(STATISTICS_ID.totalGames);
     if (span) { span.textContent = gameList.length; }
@@ -35,4 +38,12 @@ export function renderCollectionStatics(gameList){
 function getAvg(gameList, key){
     const total = gameList.reduce((acc, game) => acc + (Number(game[key]) || 0), 0);
     return Math.round(total / gameList.length);
+}
+
+export function resetCollectionStatics() {
+    console.log("Reset statische");
+    Object.values(STATISTICS_ID).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) { element.textContent = EMPTY_VALUE; }
+    });
 }
