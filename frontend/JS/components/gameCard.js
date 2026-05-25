@@ -20,8 +20,6 @@ export async function init() {
         if (!responseHTML.ok) { throw new Error(`Errore nel caricamento del template: ${responseHTML.status}`);}
         
         const cardTemplate = await responseHTML.text();
-        console.log("Template caricato con successo!"); 
-        
         template = cardTemplate;
     } catch (error) {
         console.error("Errore nel caricamento del template:", error);

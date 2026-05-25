@@ -13,7 +13,6 @@ async function runRoute(route, options = {}) {
 
         if (!response.ok){
             let errorData;
-            ;
             try      { errorData = await response.json();                           }
             catch(e) { errorData = { message: response.statusText, details: [] };   }
             throw new ApiError( errorData.message || `Errore HTTP ${response.status}`, response.status || null, errorData.details || []);
@@ -24,12 +23,6 @@ async function runRoute(route, options = {}) {
         console.error(`Errore durante la fetch verso ${route}: ${error.status} ( ${error.message})`);
         throw error;
     }
-}
-
-async function putJSONonID(route, id, options) {
-    const outputDiv = document.querySelector(id);
-    const response = await runRoute(route, options);
-    outputDiv.textContent = JSON.stringify(response, null, 4);
 }
 
 function buildQueryString(filters) {

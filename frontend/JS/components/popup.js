@@ -50,7 +50,7 @@ function clearPopUp(){
  *      @param {Function} [popUpData.onOK]      @param {Function} [popUpData.onConfirm]     @param {Function} [popUpData.onCancel]
 */
 export function openPopUp(Type, popUpData){
-    if(!popUp){console.log("Pop-up non inizializzato"); return;}
+    if(!popUp){return;}
     clearPopUp();
     const config = POPUP_CONFIG[Type];
     popUp.querySelector(ID.Title).textContent = popUpData.title;

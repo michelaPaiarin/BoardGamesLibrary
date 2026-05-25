@@ -3,6 +3,8 @@ import { openPopUp, TYPE } from "../components/popup.js";
 const MESSAGES = {
     GET_GAME_ERROR:        {   type: TYPE.ERROR,       title: 'ERRORE',
         message: 'Il gioco richiesto non è momentaneamente disponibile.'
+    }, LOAD_DETAIL_ERROR: {     type: TYPE.ERROR,      title: 'ERRORE CARICAMENTO', 
+        message: "Impossibile caricare i dettagli di questo gioco. Potrebbe essere stato rimosso o c'è un problema di rete." 
     }, NETWORK_ERROR:      {   type: TYPE.ERROR,       title: 'ERRORE DI RETE',
         message: 'Impossibile connettersi al server. Riprova più tardi.'
     }, CREATE_ERROR:       {   type: TYPE.ERROR,       title: 'ERRORE SALVATAGGIO',
@@ -42,6 +44,7 @@ function notifyMessage(messageConfig, callbacks = {}) {
 //------------------------------------ ERROR (TYPE.ERROR) ------------------------------------
 
 export function showErrorGetGame(onOk)      { notifyMessage(MESSAGES.GET_GAME_ERROR,        { onOk }); }
+export function showLoadDetailError(onOk)   { notifyMessage(MESSAGES.LOAD_DETAIL_ERROR,     { onOk }); }
 export function showNetworkError(onOk)      { notifyMessage(MESSAGES.NETWORK_ERROR,         { onOk }); }
 export function showCreateError(onOk)       { notifyMessage(MESSAGES.CREATE_ERROR,          { onOk }); } 
 export function showModifyError(onOk)       { notifyMessage(MESSAGES.MODIFY_ERROR,          { onOk }); }
@@ -51,7 +54,6 @@ export function showNotFoundError(onOk)     { notifyMessage(MESSAGES.NOT_FOUND_E
 export function showConflictNameError(onOk) { notifyMessage(MESSAGES.CONFLICT_NAME_ERROR,   { onOk }); }
 
 export function showSpecificApiError(error, defaultErrorHandler, onOk) {
-    console.log('showSpecificApiError', error);
     if (!error.status)        { showNetworkError();         return; }
     if (error.status === 404) { showNotFoundError();        return; }
     if (error.status === 409) { showConflictNameError();    return; }
@@ -89,6 +91,6 @@ export function showUpcomingFeatures(onOk) { notifyMessage(MESSAGES.UPCOMING_FEA
 
 export function showCustomMessage (type, title, message, callbacks = {}){ notifyMessage({type, title, message}, callbacks);   }
 
-export function showCustomError(message, onOK)                  { notifyMessage({ ...MESSAGES.CUSTOM_ERROR, message   }, { onOk                });}
+export function showCustomError(message, onOK)                  { notifyMessage({ ...MESSAGES.CUSTOM_ERROR,   message }, { onOk                });}
 export function showCustomSuccess(message, onOk)                { notifyMessage({ ...MESSAGES.CUSTOM_SUCCESS, message }, { onOk                });}
 export function showCustomConfirm(message, onConfirm, onCancel) { notifyMessage({ ...MESSAGES.CUSTOM_CONFIRM, message }, { onConfirm, onCancel });}

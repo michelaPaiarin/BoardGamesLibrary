@@ -20,8 +20,6 @@ export async function fillGameDetails(id) {
 }
 
 async function fillGameFormWithGame(game) {
-    console.log("Riempio i dettagli del gioco:", game);
-
     for (const key in ID) {
         const element = document.getElementById(ID[key]);
         
@@ -41,7 +39,6 @@ async function fillGameFormWithGame(game) {
 
     document.getElementById("delete-game").onclick = (event) => {
         Notifier.askDeleteConfirmation(game.Name, async () => {
-            console.log("Cancellazione gioco:", game.ID);
             try{
                 await deleteGame(game.ID);
                 Notifier.showDeleteSuccess(loadAllGameList);  
@@ -50,6 +47,6 @@ async function fillGameFormWithGame(game) {
                 // I don't pass onOk parameters because it doesn't have to do anything
                 Notifier.showSpecificApiError(e, Notifier.showDeleteError);
             }
-        }, () => { console.log("Cancellazione annullata da parte dell'utente"); });
+        });
     };
 }

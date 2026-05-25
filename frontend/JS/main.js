@@ -7,14 +7,12 @@ import { fillGameDetails } from "./views/gameDetail.js";
 import { gameSaveForm, fillGameForm, setConstraintGameForm } from "./views/gameForm.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Avvio dell'applicazione...");
     await Loader.init();
     PopUp.init();
     await loadAllGameList();
 });
 
 export async function loadAddGame(){
-    console.log("Hai cliccato su Aggiungi Gioco");
     await Loader.loadMainAddGame();
     await setConstraintGameForm();
 
@@ -30,9 +28,7 @@ function getFormStateString(form){
     return new URLSearchParams(new FormData(form)).toString()
 }
 
-export async function loadModifiedGames(id, previusPage) {
-    console.log("Hai cliccato sul gioco con ID = " + id);
-    
+export async function loadModifiedGames(id, previousPage) {    
     await Loader.loadMainModifiedGames(); 
     try {
         await setConstraintGameForm(), await fillGameForm(id);
@@ -41,16 +37,14 @@ export async function loadModifiedGames(id, previusPage) {
         form.dataset.method = "PUT";
         form.dataset.gameID = id;
         form.dataset.initialState = getFormStateString(form);
-        form.onsubmit = (event) => gameSaveForm(event, previusPage);
+        form.onsubmit = (event) => gameSaveForm(event, previousPage);
         
         const backBtn = document.getElementById('navigate-back-btn');
         backBtn.addEventListener('click', () => {
             const currentState = getFormStateString(form);
             if(currentState !== form.dataset.initialState){
-                Notifier.askLeaveFormConfirmation(previusPage, () => {
-                    console.log("L'utente ha deciso di restare nel form");
-                });
-            }else{ previusPage(); }
+                Notifier.askLeaveFormConfirmation(previousPage);
+            }else{ previousPage(); }
         });
     } catch (error) {
         console.error("Errore durante il caricamento dei dettagli del gioco:", error);
@@ -59,22 +53,18 @@ export async function loadModifiedGames(id, previusPage) {
 };
 
 export async function loadDetailGame(id) {
-    console.log("Hai cliccato sul gioco con ID = " + id);
     try {
-        await Loader.loadMainDetailGame();
-        await fillGameDetails(id);
+        await Loader.loadMainDetailGame(); await fillGameDetails(id);
     
         const backBtn = document.getElementById('navigate-back-btn');
         if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
     }catch (error) {
         console.error("Errore durante il caricamento dei dettagli del gioco:", error);
-        LoaderError.showErrorGetGame(loadAllGameList);
+        Notifier.showLoadDetailError(loadAllGameList);
     }    
 };
 
 export async function loadAllGameList() {
-    console.log("Caricamento della lista di tutti i giochi...");
-    await Loader.loadMainAllGames();
-    await printAllGames();
+    await Loader.loadMainAllGames(); await printAllGames(loadAddGame);
     document.getElementById('add-game-btn').addEventListener('click', () => loadAddGame(''));
 };

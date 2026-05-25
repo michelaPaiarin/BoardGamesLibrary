@@ -41,7 +41,6 @@ function getAvg(gameList, key){
 }
 
 export function resetCollectionStatics() {
-    console.log("Reset statische");
     Object.values(STATISTICS_ID).forEach(id => {
         const element = document.getElementById(id);
         if (element) { element.textContent = EMPTY_VALUE; }

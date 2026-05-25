@@ -4,15 +4,15 @@ import * as STATISTICS_RENDER       from "../components/collectionStatistics.js"
 import * as QUICK_FILTERS_RENDER    from "../components/quickFilters.js";
 import * as SEARCH_BAR              from "../components/searchBar.js";
 import * as FILTER_MANAGER          from "../utilities/filterManager.js";
+import * as Notifier                from '../utilities/notifier.js';
 
-import {  getAllGames  } from "../utilities/api.js";
-import { loadComponent } from "../utilities/loader.js";
-import {  loadAddGame  } from "../main.js"
+import {  getAllGames  }            from "../utilities/api.js";
+import { loadComponent }            from "../utilities/loader.js";
 
 const GAME_LIST_ID = 'main-home';
 const GAME_LIST_CLASS_NAME = 'game-list-container';
 const EMPTY_STATES = {
-    library: {  path: './components/emptyLibrary.html', btnId: 'empty-add-game-btn',      action: loadAddGame       },
+    library: {  path: './components/emptyLibrary.html', btnId: 'empty-add-game-btn',      action: null              },
     search:  {  path: './components/emptySearch.html',  btnId: 'empty-clear-filter-btn',  action: resetAllFilters   }
 };
 
@@ -26,7 +26,8 @@ async function getGamesList(filter) {
     }
 }
 
-export async function printAllGames() {
+export async function printAllGames(onAddGameClick) {
+    EMPTY_STATES.library.action = onAddGameClick;
     LEGEND_RENDER.renderLocationLegend();
     QUICK_FILTERS_RENDER.renderQuickFilterButton();
     SEARCH_BAR.initSearchBar();
@@ -83,7 +84,6 @@ async function renderEmptyState(isFiltered) {
 }
 
 export async function resetAllFilters() {
-    console.log("Reset totale dei filtri in corso...");
     QUICK_FILTERS_RENDER.resetFilters();
     SEARCH_BAR.clearSeachBar();
     await FILTER_MANAGER.resetFilters();

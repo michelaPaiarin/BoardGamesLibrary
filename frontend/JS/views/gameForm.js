@@ -29,22 +29,21 @@ export async function fillGameForm(id) {
 }
 
 async function fillGameFormWithGame(game) {
-    console.log("Riempio il form con i dati del gioco");
     for (const key in ID) {
         const element = document.getElementById(ID[key]);
         
         if (!element) { console.warn(`Elemento con ID ${ID[key]} non trovato per la chiave ${key}`); continue; }
-        if (game[key] == undefined) { console.log("Chiave non presente nei dati del gioco:", key); continue; }
+        if (game[key] == undefined) { continue; }
 
         element.value = game[key];
     }
 }
 
-function addSpecificProperties(proprietis, constraintsArray) {
+function addSpecificProperties(property, constraintsArray) {
     for (const key in constraintsArray) {
         for (const id of constraintsArray[key]) { 
             const element = document.getElementById(ID[id]);
-            if (element) { element[proprietis] = GAME_CONSTRAINTS[key]; }
+            if (element) { element[property] = GAME_CONSTRAINTS[key]; }
         }
     }
 }
@@ -89,7 +88,7 @@ function showValidationErrors(errors) {
     }
 }
 
-export async function gameSaveForm(event, previusPage) {
+export async function gameSaveForm(event, previousPage) {
     event.preventDefault(); 
     clearValidationErrors();
 
@@ -123,10 +122,10 @@ export async function gameSaveForm(event, previusPage) {
 
     if (validation.errors.length > 0) { showValidationErrors(validation.errors); return; }
     
-    saveChange(gameData, method, previusPage, gameID);
+    saveChange(gameData, method, previousPage, gameID);
 }
 
-async function saveChange(game, method, previusPage, id = null) {
+async function saveChange(game, method, previousPage, id = null) {
     console.log((method == 'PUT') ? `Salvo gioco id: ${id}` : `Salvo nuovo gioco`);
     
     try {
@@ -140,8 +139,8 @@ async function saveChange(game, method, previusPage, id = null) {
         if(method == 'POST'){ console.log(`Id nuovo gioco: ${response.gameId}`); }
         
         switch (method) {
-            case 'POST' : Notifier.showCreateSuccess(previusPage);  return;
-            case 'PUT'  : Notifier.showModifySuccess(previusPage);  return;
+            case 'POST' : Notifier.showCreateSuccess(previousPage);  return;
+            case 'PUT'  : Notifier.showModifySuccess(previousPage);  return;
         }
     } catch (e) {
         switch (method) { // I don't pass onOk parameters because it doesn't have to do anything
