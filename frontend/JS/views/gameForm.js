@@ -3,8 +3,6 @@ import { getGameById, postGame, putGame                 } from '../utilities/api
 import { validateGame, cleanGameData, GAME_CONSTRAINTS  } from '../sharedExports.js';
 import * as Notifier                                      from '../utilities/notifier.js';
 
-const errorSufix = '-error';
-
 const ID = {
     Name: 'name-input',
     MinPlayer: 'min-players-input',
@@ -23,9 +21,7 @@ const IDMinimalConstraints = {
     MinPlayerAge: ['MinAge'],                   MinYear: ['Year'],
 }
 
-const IDMaximalConstraints = {
-    MaxYear: ['Year'],
-}
+const IDMaximalConstraints = { MaxYear: ['Year'] }
 
 // note: if error occurs the caller handle it
 export async function fillGameForm(id) {
@@ -61,34 +57,29 @@ export async function setConstraintGameForm() {
 
     addSpecificProperties('min', IDMinimalConstraints);
     addSpecificProperties('max', IDMaximalConstraints);
-}
 
-function clearErrorMessages() {
     for (const key in ID) {
-        let attribute;
-
-        if      (key == 'MinPlayer')  { attribute = 'Players'; }
-        else if (key == 'MaxPlayer')  { continue;             }
-        else                          { attribute = key;      }
-        
-        const errorElement = document.getElementById(attribute + errorSufix);
-        if (errorElement) { errorElement.textContent = ''; }
+        const el = document.getElementById(ID[key]);
+        if (el) { el.addEventListener('input', () => el.setCustomValidity('')); }
     }
-
-    for(const key in ID){ document.getElementById(ID[key]).classList.remove('invalid'); }
 }
 
-function showErrorMessage(field, message) {
-    const errorElement = document.getElementById(field + errorSufix);
-    if (errorElement) { errorElement.textContent = message; }
-
-    if (field == 'Player') {
-        document.getElementById(ID['MinPlayer']).classList.add('invalid');
-        document.getElementById(ID['MaxPlayer']).classList.add('invalid');
-    } else {
-        console.log(field, ID[field]);
-        document.getElementById(ID[field]).classList.add('invalid');
+function clearValidationErrors() {
+    for (const key in ID) {
+        const el = document.getElementById(ID[key]);
+        if (el) { el.setCustomValidity(''); }
     }
+}
+
+/* Custom validation errors are shown one at a time via setCustomValidity/reportValidity.
+ * There are at most 4 semantic checks not handle natively with HTML5
+ * It's rare for there to be more than one.
+ * Since there are so few of them, I think it's acceptable to show them one at a time.
+*/
+function showErrorMessage(field, message) {
+    const fieldId = (field === 'Player') ? ID['MinPlayer'] : ID[field];
+    const el = document.getElementById(fieldId);
+    if (el) { el.setCustomValidity(message); el.reportValidity(); }
 }
 
 function showValidationErrors(errors) {
@@ -100,7 +91,7 @@ function showValidationErrors(errors) {
 
 export async function gameSaveForm(event, previusPage) {
     event.preventDefault(); 
-    clearErrorMessages();
+    clearValidationErrors();
 
     const method = event.target.dataset.method;
     const gameID = event.target.dataset.gameID || null;

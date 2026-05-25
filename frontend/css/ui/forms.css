@@ -39,12 +39,3 @@
 .input-group        { @apply flex items-center gap-2;   }
 .input-group input  { @apply w-full text-center;        }
 .input-group span   { @apply font-bold text-ink-dark; }
-
-.error-message {
-    @apply text-sm text-text-danger mt-1;
-}
-
-.invalid input {
-    @apply  border-text-danger
-            focus:border-text-danger focus:ring-1 focus:ring-text-danger;
-}
