@@ -38,13 +38,13 @@
             transition-colors;
 }
 
-#quick-filter-grid { @apply grid grid-cols-2 gap-2;                                 }
+#quick-filter-grid { @apply grid grid-cols-1 xl:grid-cols-2 gap-2;                     }
 
-.stat-row     { @apply mt-3 text-sm text-text-secondary;                            }
-.stat-value   { @apply font-bold text-text-primary;                                 }
+.stat-row     { @apply mt-3 text-sm text-text-secondary;                             }
+.stat-value   { @apply font-bold text-text-primary;                                  }
 
-#legend-grid  { @apply flex flex-col gap-3;                                         }
-.legend-item  { @apply flex items-center gap-3 text-sm text-text-primary font-bold; }
+#legend-grid  { @apply flex flex-col gap-3;                                             }
+.legend-item  { @apply flex items-center gap-3 text-sm text-text-primary font-bold;   }
 
 .legend-badge {
     @apply  px-2 py-1 w-10 bg-wood-light
