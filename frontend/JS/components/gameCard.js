@@ -8,6 +8,7 @@ const CARD_FIELDS  = [
     { selector: '.game-img',        prop: 'alt',              value: g => g.Name },
     { selector: '.game-players',    prop: 'textContent',      value: g => `👥 ${g.MinPlayer}-${g.MaxPlayer}` },
     { selector: '.game-time',       prop: 'textContent',      value: g => `⏱️ ${g.Time} min` },
+    { selector: '.game-age',        prop: 'textContent',      value: g => `👶 +${g.MinAge}` },
     { selector: '.game-location',   prop: 'textContent',      value: g => g.Location },
 ];
 
