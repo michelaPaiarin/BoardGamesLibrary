@@ -229,6 +229,31 @@ Risposta `200 OK`:
 { "status": "success", "message": "Game deleted successfully", "changes": 1 }
 ```
 
+## Architettura Front-end
+
+L'interfaccia è una **Single Page Application (SPA)** in Vanilla JavaScript (ES6 Modules), senza framework reattivi esterni. La navigazione tra le viste avviene senza ricaricare la pagina.
+
+### Struttura dei moduli client-side
+
+- **`main.js` (Orchestratore):** coordina il routing lato client e il ciclo di vita dell'applicazione.
+- **`views/`:** logica DOM per ogni schermata (`gamesList.js`, `gameDetail.js`, `gameForm.js`).
+- **`api.js`:** wrapper centralizzato per le chiamate HTTP tramite Fetch API. 
+  Controlla `response.ok` e lancia un'eccezione `ApiError` (con `status` e `details`) per forzare l'ingresso nel blocco `catch` anche in caso di errori HTTP applicativi (es. 409 Conflict).
+- **`loader.js`:** carica componenti HTML riutilizzabili (navbar, footer, popup) tramite fetch asincrone.
+- **`notifier.js` + `popup.js`:** sistema di messaggistica visiva che sostituisce le funzioni native del browser (`alert`, `confirm`) con modali tematiche.
+
+### Gestione degli stati vuoti
+
+Quando il database è vuoto o i filtri non producono risultati, vengono caricati dinamicamente componenti HTML dedicati (`emptyLibrary.html`, `emptySearch.html`) con call-to-action contestuali, evitando schermate bianche.
+
+### Statistiche lato client
+
+Il calcolo di giochi totali, ore totali e medie (giocatori, tempo, età) viene eseguito nel browser tramite `.reduce()` sul sottoinsieme filtrato corrente, senza query aggiuntive al database.
+
+### Design System (CSS ibrido)
+
+Tailwind CSS v4 con approccio semantico: il markup usa classi semantiche (`primaryButton`, `badge-info`) mentre la logica visiva è centralizzata nei file `.css` tramite la direttiva `@apply`.
+
 ## Tecnologie utilizzate
  
 - **Runtime:** Node.js
