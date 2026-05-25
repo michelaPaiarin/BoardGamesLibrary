@@ -14,18 +14,19 @@ export async function getAllGames(filters) {
     catch (error)   { throw error; }
 }
 
-export async function getGameById(gameId) {
-    let validation = GamesValidator.validateID(gameId);
+function checkValidIdOrThrow(id) {
+    const validation = GamesValidator.validateID(id);
+    if (!validation.valid) { throw { status: 400, message: 'Invalid ID format', errors: validation.errors }; }
+}
 
-    if (!validation.valid)  { throw {status: 400, message: validation.message}; }
+export async function getGameById(gameId) {
+    checkValidIdOrThrow(gameId);
+
     try                     { return await GamesModel.getGameById(gameId); }
     catch (error)           { throw error; }
 }    
 
-export async function addGame(game) {
-    try                     { game = GamesValidator.cleanGameData(game);}
-    catch(error)            { throw { status: 400, message: error.message }; }
-    
+export async function addGame(game) {    
     let validation = GamesValidator.validateGame(game);
     if (!validation.valid)  { throw { status: 400, message: 'Invalid game data', errors: validation.errors}; }
 
@@ -37,9 +38,8 @@ export async function addGame(game) {
 }
 
 export async function updateGame(gameId, game) {
-    let idValidation = GamesValidator.validateID(gameId);
-    if (!idValidation.valid)                            { throw { status: 400, message: idValidation.message};}
-
+    checkValidIdOrThrow(gameId);
+    
     try                                                 { game = GamesValidator.cleanGameData(game);}
     catch(error)                                        { throw { status: 400, message: error.message }; }
 
