@@ -54,7 +54,7 @@ async function loadGames(filter = {}) {
 
 async function renderGameList(gameList, container, isFiltered){
     if (!gameList || gameList.length === 0) {
-        renderEmptyState(isFiltered); resetCollectionStatics(); return;
+        renderEmptyState(isFiltered); return;
     }
 
     if(!GAME_CARD_RENDER.isTemplateLoad()){
