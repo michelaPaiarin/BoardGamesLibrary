@@ -47,7 +47,6 @@ async function loadGames(filter = {}) {
         return;
     }
     
-    console.log(filter != {});
     await renderGameList(games, container, (Object.keys(filter).length > 0 ));
     STATISTICS_RENDER.renderCollectionStatics(games);
 }
@@ -68,7 +67,6 @@ async function renderGameList(gameList, container, isFiltered){
     gameList.forEach(game => { container.appendChild(GAME_CARD_RENDER.createGameCard(game)); }); 
 }
 
-
 async function renderEmptyState(isFiltered) {
     const config = isFiltered ? EMPTY_STATES.search : EMPTY_STATES.library;
 
@@ -87,6 +85,6 @@ async function renderEmptyState(isFiltered) {
 export async function resetAllFilters() {
     console.log("Reset totale dei filtri in corso...");
     QUICK_FILTERS_RENDER.resetFilters();
-    SEARCH_BAR.clearSeachBar
+    SEARCH_BAR.clearSeachBar();
     await FILTER_MANAGER.resetFilters();
 }

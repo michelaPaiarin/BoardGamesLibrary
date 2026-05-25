@@ -1,8 +1,8 @@
 export class ApiError extends Error {
-    constructor(message, details = []) {
+    constructor(message, status = null, details = []) {
         super(message);
         this.name = "ApiError";
-        this.status = this.status;
+        this.status = status;
         this.details = details;
     }
 }
@@ -13,16 +13,15 @@ async function runRoute(route, options = {}) {
 
         if (!response.ok){
             let errorData;
-
+            ;
             try      { errorData = await response.json();                           }
             catch(e) { errorData = { message: response.statusText, details: [] };   }
-
-            throw new ApiError( errorData.message || `Errore HTTP ${response.status}`, errorData.details || [], response.status);
+            throw new ApiError( errorData.message || `Errore HTTP ${response.status}`, response.status || null, errorData.details || []);
         } 
 
         return await response.json();
     }catch (error){
-        console.error(`Errore durante la fetch verso ${route}:`, error);
+        console.error(`Errore durante la fetch verso ${route}: ${error.status} ( ${error.message})`);
         throw error;
     }
 }

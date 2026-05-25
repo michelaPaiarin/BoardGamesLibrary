@@ -61,7 +61,7 @@ export async function loadModifiedGames(id, previusPage) {
 export async function loadDetailGame(id) {
     console.log("Hai cliccato sul gioco con ID = " + id);
     try {
-        await Loader.loadMainDetailGame(id);
+        await Loader.loadMainDetailGame();
         await fillGameDetails(id);
     
         const backBtn = document.getElementById('navigate-back-btn');

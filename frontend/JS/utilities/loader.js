@@ -6,7 +6,7 @@ const PATHS = {
 
 const TITLES = {
     allGames:   'Tutti i giochi',               addGame:    'Aggiungi nuovo gioco',
-    editGame:   'Modifica gioco: ',             detailGame: 'Dettagli gioco: ',
+    editGame:   'Modifica gioco ',              detailGame: 'Dettagli gioco ',
 }
 
 const MAIN_TITLE_ID = 'content-title';
@@ -36,28 +36,28 @@ export async function loadMainAllGames(){
     await loadComponent(PATHS.allGames, 'main-placeholder');
 }
 
-export async function loadMainAddGame(gameName){
+export async function loadMainAddGame(){
     const titleEl = document.getElementById(MAIN_TITLE_ID);
     
-    if(titleEl) { titleEl.innerText = `${TITLES.addGame} ${gameName}`; }
+    if(titleEl) { titleEl.innerText = TITLES.addGame; }
     else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
 
     await loadComponent(PATHS.formGame, 'main-placeholder');
 }
 
-export async function loadMainModifiedGames(gameName){
+export async function loadMainModifiedGames(){
     const titleEl = document.getElementById(MAIN_TITLE_ID);
     
-    if(titleEl) { titleEl.innerText = `${TITLES.editGame} ${gameName}`; }
+    if(titleEl) { titleEl.innerText = TITLES.editGame; }
     else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
     
     await loadComponent(PATHS.formGame, 'main-placeholder');
 }
 
-export async function loadMainDetailGame(gameName){
+export async function loadMainDetailGame(){
     const titleEl = document.getElementById(MAIN_TITLE_ID);
     
-    if(titleEl) { titleEl.innerText = `${TITLES.detailGame} ${gameName}`; }
+    if(titleEl) { titleEl.innerText = TITLES.detailGame; }
     else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
     
     await loadComponent(PATHS.detailGame, 'main-placeholder');
