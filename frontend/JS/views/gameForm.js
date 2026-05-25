@@ -17,8 +17,8 @@ const ID = {
 }
 
 const IDMinimalConstraints = {
-    MinPlayers: ['MinPlayer', 'MaxPlayer'],     MinTime: ['Time'],
-    MinPlayerAge: ['MinAge'],                   MinYear: ['Year'],
+    MinPlayer: ['MinPlayer', 'MaxPlayer'],      MinTime: ['Time'],
+    MinAge:    ['MinAge'],                      MinYear: ['Year'],
 }
 
 const IDMaximalConstraints = { MaxYear: ['Year'] }
@@ -50,7 +50,7 @@ function addSpecificProperties(proprietis, constraintsArray) {
 }
 
 export async function setConstraintGameForm() {
-    for (const key of GAME_CONSTRAINTS.RequireFields) {
+    for (const key of GAME_CONSTRAINTS.RequiredFields) {
         const element = document.getElementById(ID[key]);
         if (element) { element.required = true; }
     }
@@ -144,9 +144,7 @@ async function saveChange(game, method, previusPage, id = null) {
             case 'PUT'  : Notifier.showModifySuccess(previusPage);  return;
         }
     } catch (e) {
-        console.error("Errore durante il salvataggio:", e);
-        // I don't pass onOk parameters because it doesn't have to do anything
-        switch (method) {
+        switch (method) { // I don't pass onOk parameters because it doesn't have to do anything
             case 'POST' : Notifier.showSpecificApiError(e, Notifier.showCreateError);  return;
             case 'PUT'  : Notifier.showSpecificApiError(e, Notifier.showModifyError);  return;
         }
