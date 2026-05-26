@@ -49,7 +49,7 @@ BoardGamesLibrary/
 │   ├── components/         # Componenti HTML riutilizzabili (navbar, popup, card)
 │   ├── css/                # Fogli di stile (Tailwind + stili semantici)
 │   ├── JS/                 # Logica client-side (api.js, viste, componenti)
-│   ├── img/                # Risorse grafiche
+│   ├── IMG/                # Risorse grafiche
 │   ├── views/              # Template HTML delle schermate
 │   └── index.html          # Entry point del frontend
 ├── shared/
