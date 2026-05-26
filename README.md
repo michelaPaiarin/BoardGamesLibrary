@@ -12,6 +12,11 @@ Per installare il progetto seguire i seguenti passi:
 ```console
 npm install
 ```
+3. Inizializzare il database (solo al primo avvio):
+```console
+npm run init-db
+```
+> **Nota:** è sicuro da eseguire più volte — non sovrascrive dati esistenti.
 
 Per eseguire il progetto dopo averlo installato:
 1. Aprire il terminale nella cartella principale
@@ -21,12 +26,14 @@ npm start
 ```
 
 ## Struttura del progetto
-Il progetto si divide in 3 macro cartelle:
 ```
 BoardGamesLibrary/
 ├── backend/
-│   ├── controllers/        # Logica di gestione delle richieste
-│   ├── DB/                 # Database SQLite, script DDL e dati di esempio
+│   ├── controllers/        # Logica di gestione delle richieste HTTP
+│   ├── DB/
+│   │   ├── createTable.sql # Script DDL per la creazione della tabella
+│   │   ├── initDB.js       # Script di inizializzazione del database
+│   │   └── games.db        # Database SQLite (generato da init-db)
 │   ├── models/
 │   │   ├── games.js        # Query CRUD verso il database
 │   │   └── queryBuilder.js # Costruzione dinamica delle WHERE clause
@@ -35,18 +42,20 @@ BoardGamesLibrary/
 │   ├── sharedExports.js    # Re-export centralizzato dei moduli condivisi
 │   └── server.js           # Entry point del server
 ├── frontend/
-│   ├── components/         # Componenti HTML riutilizzabili (es. navbar)
-│   ├── css/                # Fogli di stile (base, input Tailwind)
-│   ├── JS/                 # Logica client-side (api.js, pagine)
+│   ├── components/         # Componenti HTML riutilizzabili (navbar, popup, card)
+│   ├── css/                # Fogli di stile (Tailwind + stili semantici)
+│   ├── JS/                 # Logica client-side (api.js, viste, componenti)
 │   ├── img/                # Risorse grafiche
-│   ├── views/              # Pagine dell'applicazione
-│   └── index.html          # Pagina principale
+│   ├── views/              # Template HTML delle schermate
+│   └── index.html          # Entry point del frontend
 ├── shared/
 │   ├── config/
 │   │   └── gameConstraints.js  # Vincoli e costanti di validazione
+│   ├── data/
+│   │   ├── location.js         # Dizionario leggenda posizioni
+│   │   └── quickFilters.js     # Configurazione filtri rapidi
 │   └── validators/
 │       ├── common.js       # Validatori generici riutilizzabili
-│       ├── errors.js       # Errori standard condivisi
 │       ├── gameFilter.js   # Validazione dei filtri di ricerca
 │       └── games.js        # Validazione dei dati di gioco
 ├── postman/                # Collezione Postman per il test delle API
@@ -69,7 +78,6 @@ Le rotte impementate dal server sono le seguenti:
 L'endpoint `GET /games` supporta un sistema di query string che permette di filtrare i risultati tramite suffissi applicati al nome del campo.
 
 #### Campi testuali: `Name`, `Location`, `Description`, `UrlBigImage`, `UrlSmallImage`, `Room`
-
 
 | Suffisso | Significato             | Esempio        |
 |----------|-------------------------|----------------|
@@ -170,7 +178,7 @@ Risposta `200 OK`:
 
 Risposta `404 Not Found`:
 ```json
-{ "status": "error", "message": "Game not found" }
+{ "message": "No game found with the provided ID", "details": [] }
 ```
 
 ### POST /games 
@@ -230,28 +238,26 @@ Risposta `200 OK`:
 ```
 
 ## Architettura Front-end
-
+ 
 L'interfaccia è una **Single Page Application (SPA)** in Vanilla JavaScript (ES6 Modules), senza framework reattivi esterni. La navigazione tra le viste avviene senza ricaricare la pagina.
-
+ 
 ### Struttura dei moduli client-side
-
+ 
 - **`main.js` (Orchestratore):** coordina il routing lato client e il ciclo di vita dell'applicazione.
 - **`views/`:** logica DOM per ogni schermata (`gamesList.js`, `gameDetail.js`, `gameForm.js`).
-- **`api.js`:** wrapper centralizzato per le chiamate HTTP tramite Fetch API. 
-  Controlla `response.ok` e lancia un'eccezione `ApiError` (con `status` e `details`) per forzare l'ingresso nel blocco `catch` anche in caso di errori HTTP applicativi (es. 409 Conflict).
+- **`api.js`:** wrapper centralizzato per le chiamate HTTP tramite Fetch API. Controlla `response.ok` e lancia un'eccezione `ApiError` (con `status` e `details`) per forzare l'ingresso nel blocco `catch` anche in caso di errori HTTP applicativi (es. 409 Conflict).
 - **`loader.js`:** carica componenti HTML riutilizzabili (navbar, footer, popup) tramite fetch asincrone.
 - **`notifier.js` + `popup.js`:** sistema di messaggistica visiva che sostituisce le funzioni native del browser (`alert`, `confirm`) con modali tematiche.
-
 ### Gestione degli stati vuoti
-
+ 
 Quando il database è vuoto o i filtri non producono risultati, vengono caricati dinamicamente componenti HTML dedicati (`emptyLibrary.html`, `emptySearch.html`) con call-to-action contestuali, evitando schermate bianche.
-
+ 
 ### Statistiche lato client
-
+ 
 Il calcolo di giochi totali, ore totali e medie (giocatori, tempo, età) viene eseguito nel browser tramite `.reduce()` sul sottoinsieme filtrato corrente, senza query aggiuntive al database.
-
+ 
 ### Design System (CSS ibrido)
-
+ 
 Tailwind CSS v4 con approccio semantico: il markup usa classi semantiche (`primaryButton`, `badge-info`) mentre la logica visiva è centralizzata nei file `.css` tramite la direttiva `@apply`.
 
 ## Tecnologie utilizzate

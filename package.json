@@ -10,7 +10,8 @@
   "scripts": {
     "dev:backend": "npm start --workspace=backend",
     "dev:frontend": "npm run watch:css --workspace=frontend",
-    "start": "concurrently -n \"SERVER,TAILWIND\" -c \"magenta.bold,blue.bold\" \"npm run dev:backend\" \"npm run dev:frontend\""
+    "start": "concurrently -n \"SERVER,TAILWIND\" -c \"magenta.bold,blue.bold\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "init-db": "node backend/DB/initDB.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
