@@ -16,7 +16,11 @@ npm install
 ```console
 npm run init-db
 ```
-> **Nota:** è sicuro da eseguire più volte — non sovrascrive dati esistenti.
+4. Riempire il database (solo al primo avvio, facoltativo):
+```console
+npm run seed-db
+```
+> **Nota:** i comandi ai punti 3 e 4 sono sicuri da eseguire più volte; non sovrascrivono i dati esistenti e prevengono perdite accidentali di informazioni.
 
 Per eseguire il progetto dopo averlo installato:
 1. Aprire il terminale nella cartella principale
