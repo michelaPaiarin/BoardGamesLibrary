@@ -20,7 +20,7 @@ async function getGamesList(filter) {
     try {
         return await getAllGames(filter);
     } catch (e) {
-        console.error("Errore durante il recupero della lista giochi:", e);
+        console.error("Error fetching games:", e);
         Notifier.showSpecificApiError(e, null);
         throw e;
     }
@@ -44,7 +44,7 @@ async function loadGames(filter = {}) {
 
     try     { games = await getGamesList(filter); }
     catch   { 
-        container.innerHTML = '<p class="text-red-500 text-center mt-4">Impossibile comunicare con il server. Ricarica la pagina.</p>';
+        container.innerHTML = '<p class="text-text-danger text-center mt-4">Impossibile comunicare con il server. Ricarica la pagina.</p>';
         return;
     }
     
@@ -73,9 +73,9 @@ async function renderEmptyState(isFiltered) {
 
     try           { await loadComponent(config.path, GAME_LIST_ID); } 
     catch (error) { // Checking to be safe. It shouldn't happen.
-        console.error("Errore di rendering Empty State:", error);
+        console.error("Error rendering empty state:", error);
         const container = document.getElementById(GAME_LIST_ID);
-        if (container) { container.innerHTML = `<p class="text-text-danger">Errore nel caricamento dell'interfaccia.</p>`;}
+        if (container) { container.innerHTML = `<p class="text-text-danger">Error loading interface.</p>`;}
         return;
     }
 

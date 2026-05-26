@@ -20,45 +20,33 @@ export async function init() { for (const item of loadOnce) { await loadComponen
 export async function loadComponent(path, placeholderId) {
     try {
         const response = await fetch(path);
-        if (!response.ok) throw new Error(`Errore nel caricamento di ${path}`);
+        if (!response.ok) throw new Error(`Error loading component ${path}`);
         const html = await response.text();
         document.getElementById(placeholderId).innerHTML = html;
     } catch (error) {
-        console.error(`Non sono riuscito a caricare ${path}:`, error);
+        console.error(`Error loading component ${path}:`, error);
         throw error;
     }
 }
 
-export async function loadMainAllGames(){
+function setTitle(title) {
     const titleEl = document.getElementById(MAIN_TITLE_ID);
-    
-    if(titleEl) { titleEl.innerText = TITLES.allGames; }
-    await loadComponent(PATHS.allGames, 'main-placeholder');
+    if (titleEl) { titleEl.innerText = title; }
+    else        { console.warn(`Element with ID ${MAIN_TITLE_ID} not found in HTML, but loading page anyway!`); }
+}
+
+export async function loadMainAllGames(){
+    setTitle(TITLES.allGames); await loadComponent(PATHS.allGames, 'main-placeholder');
 }
 
 export async function loadMainAddGame(){
-    const titleEl = document.getElementById(MAIN_TITLE_ID);
-    
-    if(titleEl) { titleEl.innerText = TITLES.addGame; }
-    else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
-
-    await loadComponent(PATHS.formGame, 'main-placeholder');
+    setTitle(TITLES.addGame); await loadComponent(PATHS.formGame, 'main-placeholder');
 }
 
 export async function loadMainModifiedGames(){
-    const titleEl = document.getElementById(MAIN_TITLE_ID);
-    
-    if(titleEl) { titleEl.innerText = TITLES.editGame; }
-    else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
-    
-    await loadComponent(PATHS.formGame, 'main-placeholder');
+    setTitle(TITLES.editGame); await loadComponent(PATHS.formGame, 'main-placeholder');
 }
 
 export async function loadMainDetailGame(){
-    const titleEl = document.getElementById(MAIN_TITLE_ID);
-    
-    if(titleEl) { titleEl.innerText = TITLES.detailGame; }
-    else        { console.warn(`Non trovo l'ID ${MAIN_TITLE_ID} nell'HTML, ma carico la pagina lo stesso!`); }
-    
-    await loadComponent(PATHS.detailGame, 'main-placeholder');
+    setTitle(TITLES.detailGame); await loadComponent(PATHS.detailGame, 'main-placeholder');
 }

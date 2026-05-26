@@ -17,12 +17,12 @@ let template;
 export async function init() {
     try {
         const responseHTML = await fetch(GAME_CARD_PATH);
-        if (!responseHTML.ok) { throw new Error(`Errore nel caricamento del template: ${responseHTML.status}`);}
+        if (!responseHTML.ok) { throw new Error(`Error loading template: ${responseHTML.status}`);}
         
         const cardTemplate = await responseHTML.text();
         template = cardTemplate;
     } catch (error) {
-        console.error("Errore nel caricamento del template:", error);
+        console.error("Error loading template:", error);
         throw new Error("Loading error");
     }
 }

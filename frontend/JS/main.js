@@ -47,7 +47,7 @@ export async function loadModifiedGames(id, previousPage) {
             }else{ previousPage(); }
         });
     } catch (error) {
-        console.error("Errore durante il caricamento dei dettagli del gioco:", error);
+        console.error("Error loading game details:", error);
         Notifier.showSpecificApiError(error, () => Notifier.showErrorGetGame(loadAllGameList));
     }
 };
@@ -59,7 +59,7 @@ export async function loadDetailGame(id) {
         const backBtn = document.getElementById('navigate-back-btn');
         if (backBtn) { backBtn.addEventListener('click', loadAllGameList); }
     }catch (error) {
-        console.error("Errore durante il caricamento dei dettagli del gioco:", error);
+        console.error("Error loading game details:", error);
         Notifier.showLoadDetailError(loadAllGameList);
     }    
 };

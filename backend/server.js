@@ -20,22 +20,15 @@ app.use(express.static(frontendPath));
 app.use('/shared', express.static(sharedPath));
 
 export async function start(mode = MODE.DEFAULT) {
-  try {
-    await connectDB(mode);
-    console.log('Database connected successfully');
+	try {
+    	await connectDB(mode);
+    	console.log('Database connected successfully');
 
-    app.use('/games', gamesRouters);
-    return app.listen(port, () => { console.log(`Server is running on port ${port}`); });
-  } catch (error) {
-    console.error('Error during startup:', error);
-  }
+    	app.use('/games', gamesRouters);
+    	return app.listen(port, () => { console.log(`Server is running on port ${port}`); });
+  	} catch (error) {
+    	console.error('Error during startup:', error);
+  	}
 }
 
-if (process.argv[1] === __filename) {
-  start();
-}
-
-app.get("/welcome", (req, res) => {
-  res.send("Welcome to the backend server of the Board Games Library!");
-});
-
+if (process.argv[1] === __filename) { start(); }

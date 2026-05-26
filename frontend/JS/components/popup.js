@@ -47,7 +47,7 @@ function clearPopUp(){
  * Apre un pop-up
  * @param {Object} popUpData
  *      @param {String} popUpData.title         @param {String} popUpData.message
- *      @param {Function} [popUpData.onOK]      @param {Function} [popUpData.onConfirm]     @param {Function} [popUpData.onCancel]
+ *      @param {Function} [popUpData.onOk]      @param {Function} [popUpData.onConfirm]     @param {Function} [popUpData.onCancel]
 */
 export function openPopUp(Type, popUpData){
     if(!popUp){return;}

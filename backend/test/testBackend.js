@@ -111,12 +111,6 @@ async function run() {
 
   server = await start(MODE.TEST);
 
-  // ── 1. WELCOME ────────────────────────────────────────────
-  section('1 · WELCOME ENDPOINT');
-  {
-    const r = await req('GET', '/welcome');
-    expect('GET /welcome → 200', r.status, 200);
-  }
 
   // ── 2. GET ALL GAMES (empty DB) ───────────────────────────
   section('2 · GET /games — empty database');
@@ -134,7 +128,7 @@ async function run() {
     const r = await req('POST', '/games', game);
     const ok = expect(`POST valid game #${i+1} (${game.Name}) → 201`, r.status, 201, `id=${r.body?.id ?? r.body?._id ?? '?'}`);
     if (ok && r.body) {
-      const id = r.body.id ?? r.body._id ?? r.body.ID;
+      const id = r.body.gameId ?? r.body.id ?? r.body._id ?? r.body.ID;
       if (id !== undefined) createdIds.push(id);
     }
   }

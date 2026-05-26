@@ -22,19 +22,18 @@ export function updateFilters(newFilters, action) {
 }
 
 export async function updateFiltersAndRefresh(newFilters, action){
+    if (!onFiltersChange) { console.error('FilterManager not initialized'); return;  }
     updateFilters(newFilters, action);
     
     const cleaned = cleanFilter(activeFilters);
     const result  = validateFilter(cleaned);
-    if (!result.valid) { 
-        console.error('Filtri non validi:', result.errors);
-        return; 
-    }
+    if (!result.valid) { console.error('Filter not valid:', result.errors); return;  }
 
     await onFiltersChange(cleaned);
 }
 
 export async function resetFilters(){
+    if (!onFiltersChange) { console.error('FilterManager not initialized'); return;  }
     activeFilters = {};
     await onFiltersChange(activeFilters);
 }

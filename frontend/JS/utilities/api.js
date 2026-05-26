@@ -15,12 +15,12 @@ async function runRoute(route, options = {}) {
             let errorData;
             try      { errorData = await response.json();                           }
             catch(e) { errorData = { message: response.statusText, details: [] };   }
-            throw new ApiError( errorData.message || `Errore HTTP ${response.status}`, response.status || null, errorData.details || []);
+            throw new ApiError( errorData.message || `HTTP Error ${response.status}`, response.status || null, errorData.details || []);
         } 
 
         return await response.json();
     }catch (error){
-        console.error(`Errore durante la fetch verso ${route}: ${error.status} ( ${error.message})`);
+        console.error(`Error fetching ${route}: ${error.status} ( ${error.message})`);
         throw error;
     }
 }

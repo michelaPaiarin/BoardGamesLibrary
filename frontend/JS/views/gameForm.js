@@ -1,4 +1,3 @@
-import { loadAllGameList                                } from '../main.js';
 import { getGameById, postGame, putGame                 } from '../utilities/api.js';
 import { validateGame, cleanGameData, GAME_CONSTRAINTS  } from '../sharedExports.js';
 import * as Notifier                                      from '../utilities/notifier.js';
@@ -32,7 +31,7 @@ async function fillGameFormWithGame(game) {
     for (const key in ID) {
         const element = document.getElementById(ID[key]);
         
-        if (!element) { console.warn(`Elemento con ID ${ID[key]} non trovato per la chiave ${key}`); continue; }
+        if (!element) { console.warn(`Element with ID ${ID[key]} not found for key ${key}`); continue; }
         if (game[key] == undefined) { continue; }
 
         element.value = game[key];
@@ -82,10 +81,7 @@ function showErrorMessage(field, message) {
 }
 
 function showValidationErrors(errors) {
-    for (const error of errors) {
-        console.log(`Errore di validazione per ${error.field}: ${error.message}`);
-        showErrorMessage(error.field, error.message);
-    }
+    errors.forEach(error => { showErrorMessage(error.field, error.message);});
 }
 
 export async function gameSaveForm(event, previousPage) {
@@ -95,52 +91,33 @@ export async function gameSaveForm(event, previousPage) {
     const method = event.target.dataset.method;
     const gameID = event.target.dataset.gameID || null;
     let gameData = Object.fromEntries(new FormData(event.target));
-
-    console.log("Operazione:", method);
-    console.log("Dati estratti dal form:", gameData);
     
     // To be safe. The user shouldn't see it unless they hit F12 and change the HTML5 constraints.
-    try {
-        gameData = cleanGameData(gameData);
-    } catch (error) {
-        console.error("Errore durante la pulizia dei dati del gioco:", error);
-        Notifier.showDataError();
-        return;
+    try { gameData = cleanGameData(gameData); }
+    catch (error) {
+        console.error("Error cleaning game data:", error);
+        Notifier.showDataError(); return;
     }
-
-    console.log("Dati puliti del form:", gameData);
 
     let validation;
 
     switch (method) {
         case 'POST' : validation = validateGame(gameData);              break;
         case 'PUT'  : validation = validateGame(gameData, true);        break;
-        default     : console.error("Metodo non supportato:", method);  throw new Error("Metodo non supportato");
+        default     : console.error("Unsupported method:", method);  throw new Error("Unsupported method");
     }
-    
-    console.log("Risultato della validazione:", validation);
 
     if (validation.errors.length > 0) { showValidationErrors(validation.errors); return; }
     
     saveChange(gameData, method, previousPage, gameID);
 }
 
-async function saveChange(game, method, previousPage, id = null) {
-    console.log((method == 'PUT') ? `Salvo gioco id: ${id}` : `Salvo nuovo gioco`);
-    
+async function saveChange(game, method, previousPage, id = null) {    
     try {
-        let response;
         switch (method) {
-            case 'POST' : response = await postGame(game);          break;
-            case 'PUT'  : response = await putGame(id, game);       break;
-            default     : throw new Error("Metodo non supportato");
-        }
-        
-        if(method == 'POST'){ console.log(`Id nuovo gioco: ${response.gameId}`); }
-        
-        switch (method) {
-            case 'POST' : Notifier.showCreateSuccess(previousPage);  return;
-            case 'PUT'  : Notifier.showModifySuccess(previousPage);  return;
+            case 'POST' : await postGame(game);          Notifier.showCreateSuccess(previousPage);  return;
+            case 'PUT'  : await putGame(id, game);       Notifier.showModifySuccess(previousPage);  return;
+            default     : throw new Error("Unsupported method");
         }
     } catch (e) {
         switch (method) { // I don't pass onOk parameters because it doesn't have to do anything

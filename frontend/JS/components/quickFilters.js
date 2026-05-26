@@ -20,11 +20,9 @@ export function renderQuickFilterButton() {
         
         button.addEventListener('click', async () => {
             button.classList.toggle(ACTIVE_CLASSNAME);
-            const isActive = button.classList.contains(ACTIVE_CLASSNAME);
-            
-            if(!isActive){ updateFiltersAndRefresh(filter.query, FILTER_ACTION.REMOVE); return;}
+            if(!button.classList.contains(ACTIVE_CLASSNAME)){ updateFiltersAndRefresh(filter.query, FILTER_ACTION.REMOVE); return;}
             deactivateIncompatibleBtn(filter.id)
-            await updateFiltersAndRefresh(filter.query, isActive ? FILTER_ACTION.ADD : FILTER_ACTION.REMOVE);
+            await updateFiltersAndRefresh(filter.query, FILTER_ACTION.ADD);
         });
         
         quickFilterContainer.appendChild(button);
@@ -48,8 +46,8 @@ function deactivateIncompatibleBtn(filterID){
     }
 }
 
-export function resetFilters(){
-    for (const filter of QUICK_FILTERS) {
-        const btn = document.getElementById(filter.id).classList.remove(ACTIVE_CLASSNAME);
-    }
+export function resetFilters() {
+    QUICK_FILTERS.forEach(filter => {
+        document.getElementById(filter.id).classList.remove(ACTIVE_CLASSNAME);
+    });
 }
