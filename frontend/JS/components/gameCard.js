@@ -1,4 +1,5 @@
-import { loadModifiedGames, loadDetailGame, loadAllGameList } from "../main.js";
+import * as Router  from "../utilities/router.js";
+import { ROUTES }   from "../utilities/router.js";
 
 const GAME_CARD_PATH = './components/gameCard.html';
 
@@ -27,9 +28,7 @@ export async function init() {
     }
 }
 
-export function isTemplateLoad(){
-    return (template) ? true : false;
-}
+export function isTemplateLoad(){ return (template) ? true : false; }
 
 export function createGameCard(game) {
     const tempDiv = document.createElement('div');
@@ -38,13 +37,11 @@ export function createGameCard(game) {
     CARD_FIELDS.forEach(({ selector, prop, value }) => { tempDiv.querySelector(selector)[prop] = value(game);});
 
     tempDiv.querySelector('.game-action-btn').dataset.gameId = game.ID;
-
     tempDiv.querySelector('.game-action-btn').onclick = (event) => {
         event.stopPropagation();
-        loadModifiedGames(game.ID, loadAllGameList);
+        Router.navigateTo(ROUTES.MODIFIED, game.ID);
     };
     
-    tempDiv.firstElementChild.onclick = () => {loadDetailGame(game.ID); };
-
+    tempDiv.firstElementChild.onclick = () => {Router.navigateTo(ROUTES.DETAIL, game.ID);};
     return tempDiv.firstElementChild;
 }

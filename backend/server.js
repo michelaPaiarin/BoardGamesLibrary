@@ -25,6 +25,7 @@ export async function start(mode = MODE.DEFAULT) {
     	console.log('Database connected successfully');
 
     	app.use('/games', gamesRouters);
+		app.get(/.*/, (req, res) => { res.sendFile(path.join(frontendPath, 'index.html')); }); // Handle client-side routing
     	return app.listen(port, () => { console.log(`Server is running on port ${port}`); });
   	} catch (error) {
     	console.error('Error during startup:', error);
