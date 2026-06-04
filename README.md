@@ -67,7 +67,7 @@ BoardGamesLibrary/
 ```
 
 ## API Routes
-Le rotte impementate dal server sono le seguenti:
+Le rotte implementate dal server sono le seguenti:
 
 | Metodo | Percorso      | Descrizione                                    |
 |--------|---------------|------------------------------------------------|
@@ -76,6 +76,10 @@ Le rotte impementate dal server sono le seguenti:
 | POST   | /games        | Crea un nuovo gioco                            |
 | PUT    | /games/:id    | Aggiorna un gioco esistente                    |
 | DELETE | /games/:id    | Elimina un gioco                               |
+
+### Routing lato client
+
+Il server espone una rotta fallback che intercetta tutte le richieste GET non destinate alle API e restituisce `index.html`. Questo permette alla SPA di gestire la navigazione lato client anche in caso di ricaricamento diretto della pagina o accesso tramite URL diretto (es. `/detail/5`).
 
 ### Sistema di Ricerca e Filtri (GET /games)
 
@@ -247,7 +251,8 @@ L'interfaccia è una **Single Page Application (SPA)** in Vanilla JavaScript (ES
  
 ### Struttura dei moduli client-side
  
-- **`main.js` (Orchestratore):** coordina il routing lato client e il ciclo di vita dell'applicazione.
+- **`main.js`:** coordina il ciclo di vita dell'applicazione e gestisce il caricamento delle viste in risposta ai cambi di rotta.
+- **`router.js`:** gestisce la navigazione lato client tramite History API. Intercetta gli eventi `popstate` del browser e traduce i cambi di URL in aggiornamenti della vista senza ricaricare la pagina.
 - **`views/`:** logica DOM per ogni schermata (`gamesList.js`, `gameDetail.js`, `gameForm.js`).
 - **`api.js`:** wrapper centralizzato per le chiamate HTTP tramite Fetch API. Controlla `response.ok` e lancia un'eccezione `ApiError` (con `status` e `details`) per forzare l'ingresso nel blocco `catch` anche in caso di errori HTTP applicativi (es. 409 Conflict).
 - **`loader.js`:** carica componenti HTML riutilizzabili (navbar, footer, popup) tramite fetch asincrone.
