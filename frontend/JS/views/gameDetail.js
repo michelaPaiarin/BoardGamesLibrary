@@ -1,7 +1,6 @@
 import { getGameById, deleteGame }  from '../utilities/api.js';
 import * as Notifier                from '../utilities/notifier.js';
 import * as Router                  from "../utilities/router.js";
-import { ROUTES }                   from "../utilities/router.js";
 
 const ID = {    Name: 'game-name',      Image: 'game-image',    Players: 'game-players-val',
                 Time: 'game-time-val',  MinAge: 'game-age-val', Year: 'game-year-val',
@@ -23,13 +22,13 @@ async function fillGameDetailWithGame(game) {
         }
     }
 
-    document.getElementById("edit-game").onclick = () => { Router.navigateTo(ROUTES.MODIFIED, game.ID); };
+    document.getElementById("edit-game").onclick = () => { Router.navigateTo(Router.ROUTES.MODIFIED, game.ID); };
 
     document.getElementById("delete-game").onclick = () => {
         Notifier.askDeleteConfirmation(game.Name, async () => {
             try{
                 await deleteGame(game.ID);
-                Notifier.showDeleteSuccess(() => Router.navigateTo(ROUTES.HOME));  
+                Notifier.showDeleteSuccess(() => Router.navigateTo(Router.ROUTES.HOME));  
             }catch(e){
                 console.error("Error deleting game:", e);
                 Notifier.showSpecificApiError(e, Notifier.showDeleteError);         // I don't pass onOk parameters because it doesn't have to do anything

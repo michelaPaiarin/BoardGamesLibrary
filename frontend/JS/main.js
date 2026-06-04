@@ -1,31 +1,30 @@
 import * as Loader         from "./utilities/loader.js";
 import * as Notifier       from "./utilities/notifier.js";
 import * as PopUp          from "./components/popup.js";
-import * as Router         from "./utilities/router.js";
-import { ROUTES }          from "./utilities/router.js";       
+import * as Router         from "./utilities/router.js";   
 
 import { printAllGames   } from "./views/gamesList.js";
 import { fillGameDetails } from "./views/gameDetail.js";
 import { gameSaveForm, fillGameForm, setConstraintGameForm } from "./views/gameForm.js";
 
 const LOAD_VIEWS = {
-    [ROUTES.HOME]:       async () => await loadAllGameList(),
-    [ROUTES.ADD]:        async () => await loadAddGame(),
-    [ROUTES.MODIFIED]:   async (id) => await loadModifiedGames(id),
-    [ROUTES.DETAIL]:     async (id) => await loadDetailGame(id)
+    [Router.ROUTES.HOME]:       async () => await loadAllGameList(),
+    [Router.ROUTES.ADD]:        async () => await loadAddGame(),
+    [Router.ROUTES.MODIFIED]:   async (id) => await loadModifiedGames(id),
+    [Router.ROUTES.DETAIL]:     async (id) => await loadDetailGame(id)
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     await Loader.init();        PopUp.init();   Router.initRouter(changeView);
 
-    if (!history.state) { Router.navigateTo(ROUTES.HOME, null, true);                  }
+    if (!history.state) { Router.navigateTo(Router.ROUTES.HOME, null, true);                  }
     else                { changeView(history.state.viewsName, history.state.id); }
 });
 
-async function changeView(viewsName, id = null, pushToHistory = true) {
+async function changeView(viewsName, id = null) {
     let routeAction = LOAD_VIEWS[viewsName];
     if (routeAction) { await routeAction(id); }
-    else { await LOAD_VIEWS[ROUTES.HOME](); }
+    else { await LOAD_VIEWS[Router.ROUTES.HOME](); }
 }
 
 export async function loadAddGame(){
@@ -34,7 +33,7 @@ export async function loadAddGame(){
 
     let form = document.getElementById("game-form");
     form.dataset.method = "POST";
-    form.onsubmit = (event) => gameSaveForm(event, () => Router.navigateTo(ROUTES.HOME));
+    form.onsubmit = (event) => gameSaveForm(event, () => Router.navigateTo(Router.ROUTES.HOME));
     form.dataset.initialState = getFormStateString(form);
 
     const backBtn = document.getElementById('navigate-back-btn');
@@ -64,7 +63,7 @@ export async function loadModifiedGames(id) {
         backBtn.addEventListener('click', () => goBackForm(form));
     } catch (error) {
         console.error("Error loading game details:", error);
-        Notifier.showSpecificApiError(error, () => Notifier.showErrorGetGame(() => Router.navigateTo(ROUTES.HOME)));         // I don't pass onOk parameters because it doesn't have to do anything
+        Notifier.showSpecificApiError(error, () => Notifier.showErrorGetGame(() => Router.navigateTo(Router.ROUTES.HOME)));         // I don't pass onOk parameters because it doesn't have to do anything
     }
 };
 
@@ -81,6 +80,6 @@ export async function loadDetailGame(id) {
 };
 
 export async function loadAllGameList() {
-    await Loader.loadMainAllGames(); await printAllGames(() => Router.navigateTo(ROUTES.ADD));
-    document.getElementById('add-game-btn').addEventListener('click', () => Router.navigateTo(ROUTES.ADD));
+    await Loader.loadMainAllGames(); await printAllGames(() => Router.navigateTo(Router.ROUTES.ADD));
+    document.getElementById('add-game-btn').addEventListener('click', () => Router.navigateTo(Router.ROUTES.ADD));
 };
